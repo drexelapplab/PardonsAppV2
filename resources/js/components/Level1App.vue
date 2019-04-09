@@ -1,0 +1,292 @@
+<template>    
+  <div class="container">
+        <!-- ERROR Message Container -->
+        <div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+            <button type="button" class="close" v-on:click="errors = []">&times;</button>
+            <strong>Please correct the following errors:</strong>
+            <ul>
+                <li v-for="error in errors">{{ error }}</li>
+            </ul>
+        </div>
+        <!-- SUCCESS Message Container -->
+        <div id="success" v-if="successmsg === 'success'" style="position:fixed;top:10%;width:65%;z-index:1100;left:15%;right:25%;" class="alert alert-success">
+            <h4>Congrats on completing Level 1!</h4>
+                <p><a id="nextbtn" :href="'/applications/level2/'+id" class="btn btn-info">Continue to Level 2</a></p>
+        </div>
+        <form id="level1Form" @submit.prevent="formSubmit">
+        <div style="width:90%;" class="card text-white bg-secondary mb-3">  
+            <div class="card-body">
+                <h4 class="card-title text-warning">LEVEL 1: WARM UP</h4>
+                <div class="card-text">
+                    <p class="">
+                        Let’s start with your name and other personal information about you. You have to give this so the state police and the Board of Pardons can be sure they find all of the records that they need to process your application.
+                    </p>
+
+                    <p>
+                        First, what is your real name – the one on your drivers license or your birth certificate?
+                    </p>
+                    
+                    <div class="form-group">
+                        <label for="first_name">First Name:</label>
+                        <input v-model="first_name" style="width:55%;" type="text" class="form-control" size="20" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="middle_name">Middle Name: (<i>no initials</i>)</label>
+                        <input v-model="middle_name" style="width:55%;" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">                        
+                        <label  for="last_name">Last Name:</label>
+                        <input v-model="last_name" style="width:55%;" type="text" class="form-control" required />
+                    </div>
+                    <div class="form-group">                        
+                        <label class="" for="suffix">If you have something after your name like Jr, II, III, what is it?</label>
+                        <input v-model="suffix" style="width:55%;" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">                        
+                        <label style="width:55%;" for="nickname">Have you ever gone by another name - like a nickname, or the name you had before you got married, or the same name you had in another marriage? <br /><br />Type in all of the other names you have been known by:
+                        </label>
+                        <input v-model="nickname" type="text" style="width:75%;" rows="4" class="form-control" />
+                    </div>  
+                    <div class="form-group">
+                        <label for="birthdate">When were you born?<br /> <i>(use MM/DD/YYYY format)</i></label><br />
+                        <input v-model="birthdate" style="width:25%;" type="text" class="form-control" required />  
+                    </div>
+                    <div class="form-group">
+                        <label for="ssn">What is your Social Security Number?<br /><i>(Use format 111-11-1111)</i></label>
+                        <input v-model="ssn" style="width:35%;" type="text" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-12 form-group">
+                                <p>Are you male or female?</p>
+                                    <label for="gender">
+                                    <input v-model="gender" style="margin:5px;" type="radio" class="radio-inline" value="male" />
+                                    Male</label>
+                                    <label for="gender">
+                                    <input v-model="gender" style="margin:5px;" type="radio" class="radio-inline" value="female" />
+                                    Female</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <p style="width:35%;">
+                            They want to know your race - you have to pick from one of these options:
+                        </p>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="race">
+                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="White/Caucaion" />
+                                            White/Caucasion
+                                    </label>
+                                    <label for="race">
+                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="Black/African American" />
+                                            Black/African
+                                    </label>
+                                    <label for="race">
+                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="Asian" />
+                                            Asian
+                                    </label><br />
+                                    <label for="race">
+                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="Native American">
+                                            Native American
+                                    </label>
+                                    <label for="race">
+                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="Hispanic/Latino" />
+                                            Hispanic/Latino
+                                    </label>
+                                    <label for="race">
+                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="Other" />
+                                            Other
+                                    </label><br />
+                                    <label for="race">
+                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="Do Not Wish to Disclose" />
+                                        Do Not Wish to Disclose
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <p style="width:45%;" class="">
+                            Getting a pardon can take a few years.  You always want to be sure that they can get in touch with you.  As you back-up, you can give the phone number of a member of your family or a friend.  If you end up moving, be sure to let them know - this app has a form for you to use.
+                        </p>
+                         <p>
+                            What's the best place to send mail to you?
+                        </p>
+                        <div class="form-group">
+                            <label for="address">Number and Street:</label>
+                            <input v-model="address" style="width:55%;" type="text" size="10" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="address2">Apartment Number:</label>
+                            <input v-model="address2" style="width:55%;" type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="city">Town or City:</label>
+                            <input v-model="city" style="width:55%;" type="text" class="form-control" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State:</label>
+                            <input v-model="state" style="width:10%;" type="text"class="form-control" disabled />
+                        </div>
+                        <div class="form-group">
+                            <label for="zipcode">Zip Code:</label>
+                            <input v-model="zipcode" style="width:35%;" type="text" class="form-control" size="2" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address_time">How long have you lived at this address?</label>
+                        <input v-model="address_time" style="width:55%;" type="text" class="form-control"  />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">What is the best phone number to reach you at?</label>
+                        <input v-model="phone" style="width:55%;" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">    
+                        <label for="phone2">Is there another number where you can be called?<br /> Like at work or through a friend?</label>
+                        <input v-model="phone2" style="width:55%;" type="text" class="form-control" />
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            
+                            <button style="float:right;margin:20px;" class="btn btn-info">
+                                Next - Level 2
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+</template>
+
+<script>
+  import { checkdate } from '../app.js'
+  export default {
+    data(){
+        //add data fields connected to the v-model in the template
+        return{ 
+            errors: [], //error array used for validating form data
+            id: $("#appid").attr("appid"),
+            first_name: '',
+            middle_name: '',
+            last_name: '',
+            suffix: '',
+            nickname: '',
+            birthdate: '',
+            ssn: '',
+            gender: '',
+            race: '',
+            address_time: '',
+            address: '',
+            address2: '',
+            city: '',
+            state: 'PA',
+            zipcode: '', 
+            phone: '',
+            phone2: '',
+            level: '',
+            successmsg: '',
+            nexturl: '',
+            savelevel: '1'
+        }
+    },
+    methods: {
+        mounted() {
+        //get data for app_id form
+        window.axios.get(`/api/application/`+this.id).then(({ data }) => {
+                    this.first_name = data[0].first_name;
+                    this.last_name= data[0].last_name;
+                    this.middle_name = data[0].middle_name;
+                    this.suffix = data[0].suffix;
+                    this.nickname = data[0].nickname;
+                    this.birthdate = data[0].birthdate;
+                    this.ssn = data[0].ssn;
+                    this.gender = data[0].gender;
+                    this.race = data[0].race;
+                    this.address_time = data[0].address_time;
+                    this.address = data[0].address;
+                    this.address2 = data[0].address2;
+                    this.city = data[0].city;
+                    this.state = data[0].state;
+                    this.zipcode = data[0].zipcode;
+                    this.phone = data[0].phone;
+                    this.phone2 = data[0].phone2;
+                    this.level = data[0].status;
+                    });
+
+      },
+      //send level 1 data to the ApplicationController update app status to level 1
+      formSubmit: function(event) {
+        //get the application id from custom appid tag in blade template
+        //this.id = $("#appid").attr("appid"); 
+
+        //log entire model
+        console.log(this.model);
+
+        this.checkForm(); //validate form
+
+        //check level
+        if(this.level <= 1){this.level = 1; }
+
+        //if no errors then update data
+        if(!this.errors.length){
+            window.axios.put(`/api/applications/`+this.id, {id: this.id, first_name: this.first_name, middle_name: this.middle_name, last_name:this.last_name, suffix: this.suffix, nickname: this.nickname, birthdate: this.birthdate, ssn: this.ssn, gender: this.gender, race: this.race, address_time: this.address_time, address: this.address, address2: this.address2, state: this.state, city: this.city, zipcode: this.zipcode, phone: this.phone, phone2: this.phone2, level: this.level, savelevel: this.savelevel }).then(() => { 
+                //display success message
+                this.successmsg = 'success';
+                
+            });
+
+        }
+
+      },
+      //validate form fields - add errors to the error array
+      checkForm: function(e) {
+        this.errors = [];
+        if(!this.first_name){
+            this.errors.push('First Name is required.');
+        }
+        if(!this.last_name){
+            this.errors.push('Last Name is required.');
+        }
+        if(!this.birthdate){
+            this.errors.push('Birthdate is required.');
+        }
+        if(!checkdate(this.birthdate)){
+            this.errors.push('Please use MM/DD/YYYY for your birthday.')
+        }
+        if(!this.ssn){
+            this.errors.push('SSN is required.');
+        }
+        if(!this.gender){
+            this.errors.push('Gender is required.');
+        }
+        if(!this.race){
+            this.errors.push('Race is required.');
+        }
+        if(!this.address_time){
+            this.errors.push('Address Time is required.');
+        }
+        if(!this.address){
+            this.errors.push('Street Address is required.');
+        }
+        if(!this.city){
+            this.errors.push('City is required.');
+        } 
+        if(!this.phone){
+            this.errors.push('Please provide a Phone number.');
+        }              
+        //e.preventDefault();
+      }
+    },
+    components: {
+      
+    },
+    created() {
+        this.mounted();
+    }
+  }
+</script>

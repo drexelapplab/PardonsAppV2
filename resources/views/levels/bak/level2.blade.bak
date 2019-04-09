@@ -1,0 +1,176 @@
+@extends('layouts.index')
+
+    @section('head')
+    @endsection
+
+    @section('header')
+    @endsection
+    
+    
+
+    @section('content')
+        @auth <!-- are you logged in? -->
+
+        @include('progress.progress')
+        <script>
+        function showRetSchool() {
+            $("#retschoolForm").show();
+            //$("#newapp").hide();
+        }
+
+        function hideRetSchool() {
+            $("#retschoolForm").hide();
+            //$("#newapp").show();
+        }
+        function showTradeSchool() {
+            $("#tradeForm").show();
+            //$("#newapp").hide();
+        }
+
+        function hideTradeSchool() {
+            $("#tradeForm").hide();
+            //$("#newapp").show();
+        }
+    </script>
+        <appid id="appid" appid="{{$application->id}}"></appid>
+        <div class="container">
+            <div class="card text-white bg-secondary mb-3">
+                
+                <div class="card-body">
+                    <h4 class="card-title text-warning">LEVEL 2: WORK, JOBS, AND EDUCATION</h4>
+                    <div class="card-text">
+                        <p>The Board of Pardons wants to know what you have done wiht yourself after you finished serving your sentence.  In this section, you'll be asked about whether you've gone back to school, learned any new trade, and have been successful at getting and holding jobs.
+                        </p>
+                        <p>You are not required to hae done any of these things before you ask for a parodon; but if you have, your success might help persuade the Board of Pardons that you have earned a pardon.  If you have not yet done these things, you might think about doing them before you apply for a pardon.
+                        </p>
+                        <p class="" ><b>Tell us about the job(s) you have now.</b> If you don't have a job today, tell us about the last job you had.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card text-white bg-secondary mb-3">
+                
+                <div class="card-body">
+                    <h5 class="card-title text-warning">WORK EXPERIENCE</h5>
+                    <div class="card-text">
+                        @include('layouts.errors')
+<!-- TODO save job_how_long to Applications table via AJAX on-change -->
+                        <form class="form-horizontal records" method="POST" action="">
+                            <fieldset>
+                            {{ csrf_field() }}
+                            <input type="hidden" name="appID" value="" />
+                                <div class="form-group">
+                                    <label for="job_how_long">For how long, after you completed your sentence, have you had a job?</label>
+                                    <select style="width:30%;" name="job_how_long" class="form-control">
+                                        <option>Every Year</option>
+                                        <option>Almost Every Year</option>
+                                        <option>Most Years</option>
+                                        <option>Some Years</option>
+                                        <option>None</option>
+                                    </select>
+                                </div>
+                            </fieldset>
+                        </form>
+<!-- TODO save and display jobs to the Jobs table - include the current AppID!! -->
+                    <div id="jobapp"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-warning">SCHOOL</h5>
+                <div class="card-text">
+                    <div class="form-group">
+                        <p>
+                            Have you gone back to school after you finished your sentence?
+                        </p>
+
+                        <label for="retschool_status">
+                            <input onclick="showRetSchool()" style="margin:5px;" type="radio" class="radio-inline" name="retschool_status" value="Yes" />Yes&nbsp;&nbsp;
+                        </label>
+                        <label for="retschool_status">
+                            <input style="margin:5px;" onclick="hideRetSchool()" type="radio" class="radio-inline" name="reschool_status" value="No" />No
+                        </label>
+                    </div>
+                    <div id="retschoolForm" class="form-group">
+                        <div id="educationapp"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-warning">TRADES</h5>
+                <div class="card-text">
+                    <div class="form-group">
+                        <p>
+                            Have you learned a trade since you've served your sentence?
+                        </p>
+
+                        <label for="trade_status">
+                            <input onclick="showTradeSchool()" style="margin:5px;" type="radio" class="radio-inline" name="trade_status" value="Yes" />Yes&nbsp;&nbsp;
+                        </label>
+                        <label for="trade_status">
+                            <input style="margin:5px;" onclick="hideTradeSchool()" type="radio" class="radio-inline" name="trade_status" value="No" />No
+                        </label>
+                    </div>
+                    <div id="tradeForm" class="form-group">
+                        <div id="tradeapp"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-warning">RECOMMENDATIONS</h5>
+                <div class="card-text">
+                    <div class="form-group">
+                        <p>Do you think someone there would be willing to write a letter of recommendation for you?<br />
+                            <label for="recommendfield">
+                            <input v-model="recommendfield" style="margin:5px;" type="radio" class="radio-inline" value="Yes" />Yes&nbsp;&nbsp;
+                            </label>
+                            <label for="recommendfield">
+                            <input v-model="recommendfield" style="margin:5px;" type="radio" class="radio-inline"value="No" />No
+                            </label>
+                        </p>
+                    </div>
+                    <div id="recommendapp"> </div>                        
+                </div>
+            </div>
+        </div>
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-warning">EXPERIENCES</h5>
+                    <div class="card-text">
+
+                        <div class="form-group">
+                            <p>Has your conviction kept you from getting into any program or school, or from getting any job?<br />                                
+                            <label for="con_status">
+                                <input style="margin:5px;" type="radio" class="radio-inline" name="con_status" value="Yes" />Yes&nbsp;&nbsp;
+                            </label>
+                            <label for="con_status">
+                                <input style="margin:5px;" type="radio" class="radio-inline" name="con_status" value="No" />No
+                            </label></p>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="con_descr">Tell us about that. What did you apply for that you wanted to get in, but were not allowed in?</label>
+                            <textarea style="width:75%;" name="con_descr" class="form-control" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-info">SAVE</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+            <div class="row form-group">
+                <div style="float:left;" class="col-md-6">
+                  <a href="level1" style="margin:20px;" class="btn btn-info">BACK - LEVEL 1</a>
+                </div>
+                <div style="float:right;" class="col-md-6">
+                  <a href="level3" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 3</a>
+                </div>
+            </div>
+    </div>
+        @endauth
+    @endsection
