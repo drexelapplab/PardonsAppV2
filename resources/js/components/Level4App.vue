@@ -22,14 +22,8 @@
                             The Governor, and the Board of Pardons, want to know that whatever made you do what you did before, you won’t do again.  These questions will help tell them that.
                         </p>                      
                         <hr style="background-color:#f39c12;" />
-                        
                         <div class="form-group">
-                            <label for="what_learned" style="width:75%;">Tell us about something you are doing (or did not long ago) as a volunteer.</label>
-                            <textarea v-model="what_learned" style="width:75%;" name="what_learned" class="form-control">
-                            </textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="not_repeat" style="width:75%;">Most people could say that that they made bad choices about who they were with and where they went and won’t do it again.  How will the board know you won’t do it again?</label>
+                            <label for="not_repeat" style="width:75%;">Most people could say that that they made mistakes about who they were with and where they went and won’t do it again.  How will the board know you won’t do it again?</label>
                             <textarea v-model="not_repeat" style="width:75%;" name="not_repeat" class="form-control">
                             </textarea>
                         </div>
@@ -67,7 +61,6 @@
         return{ 
             errors: [], //error array used for validating form data
             id: $("#appid").attr("appid"),
-            what_learned: '',
             not_repeat: '',
             choice: '',
             teach: '',
@@ -80,8 +73,7 @@
     methods: {
         mounted() {
         //get data for app_id form
-        window.axios.get(`/api/application/`+this.id).then(({ data }) => {
-                    this.what_learned = data[0].what_learned;
+        window.axios.get('/api/application/'+this.id).then(({ data }) => {
                     this.not_repeat= data[0].not_repeat;
                     this.choice = data[0].choice;
                     this.teach = data[0].teach;
@@ -91,8 +83,6 @@
       },
       //send level 1 data to the ApplicationController update app status to level 1
       formSubmit: function(event) {
-        //get the application id from custom appid tag in blade template
-        //this.id = $("#appid").attr("appid"); 
 
         //log entire model
         console.log(this.model);
@@ -105,26 +95,34 @@
         //if no errors then update data
         if(!this.errors.length){
             window.axios.put(`/api/applications/`+this.id, {id: this.id, 
-                what_learned: this.what_learned, 
                 not_repeat: this.not_repeat, 
                 choice: this.choice, 
                 teach: this.teach, 
                 level: this.level,
-                savelevel: this.savelevel }).then(() => { 
+                savelevel: this.savelevel 
+            })
+            .then(() => { 
                 //display success message
                 this.successmsg = 'success';
-                
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);;
             });
-
         }
 
       },
       //validate form fields - add errors to the error array
       checkForm: function(e) {
         this.errors = [];
-        if(!this.what_learned){
-            this.errors.push('A response about your volunteer experience is required.');
-        }
         if(!this.not_repeat){
             this.errors.push('A response about not repeating your crime is required.');
         }

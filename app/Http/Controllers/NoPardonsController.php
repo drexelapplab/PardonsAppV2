@@ -9,26 +9,32 @@ use Faker\Generator;
 
 class NoPardonsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-    	return response(NoPardon::all()->jsonSerialize(), Response::HTTP_OK);
+    	$appid = explode("/", $request->path());
+
+        $nopardons = NoPardon::where('app_id', $appid[2])->get();
+
+        return response($nopardons->jsonSerialize(), Response::HTTP_OK);
     }
 
-    public function store()
+    public function store(Request $request)
     {
 
-    	$this->validate(request(), [
-    	 	'nopardon_date' => 'required',
+    	/*$this->validate(request(), [
+    	 	'nopardons_date' => 'required',
     	 	'level' => 'required',
     	 	'offense' => 'required',
     	 	'sentence' => 'required'
-    	 ]);
+    	 ]);*/
 
     	$nopardonObj = new NoPardon();
-    	$nopardonObj->nopardon_date = Carbon::createFromFormat('m/d/Y', $request('nopardon_date'));
-    	$nopardonObj->level = $request('level');
-    	$nopardonObj->offense = $request('offense');
-    	$nopardonObj->sentence = $request('sentence');
+        $nopardonObj->app_id = $request['app_id'];
+        $nopardonObj->nopardons_date = $request['nopardons_date'];
+    	//$nopardonObj->nopardons_date = Carbon::createFromFormat('m/d/Y', $request('nopardons_date'));
+    	$nopardonObj->level = $request['level'];
+    	$nopardonObj->offense = $request['offense'];
+    	$nopardonObj->sentence = $request['sentence'];
     	$nopardonObj->save();
 
     	//\Session::flash('flash_message', 'Record added!'):  	

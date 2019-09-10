@@ -41,7 +41,7 @@
                                     When you get the result, go over to the left and right click on the symbol.
                                 </li>
                             </ul>
-                            The DOCKET will tell you what happened in a particular case; the COURT SUMMARY should give a list of all of your court case.  Whether the list is complete could depend on how long ago your conviction was.
+                            The OTN will tell you what happened in a particular case; the COURT SUMMARY should give a list of all of your court case.  Whether the list is complete could depend on how long ago your conviction was.
                         </p>  
                         <p>
                             On this form, you will be asked the same series of questions for every conviction you want a pardon for.  You can look through the list now, to see what you’ll need – just scroll down.

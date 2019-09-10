@@ -80,7 +80,6 @@ if(~window.location.pathname.indexOf("level2")){
 import JobApp from './components/JobApp.vue';
 import RecommendApp from './components/RecommendApp.vue';
 import EducationApp from './components/EducationApp.vue';
-import TradeApp from './components/TradeApp.vue';
 
 if(~window.location.pathname.indexOf("level2")){
 	//JOB SUB-FORM LEVEL 2
@@ -112,16 +111,6 @@ if(~window.location.pathname.indexOf("level2")){
 		render: h => h(EducationApp)
 
 	});
-
-	//JOB SUB-FORM LEVEL 2
-	const tradeapp = new Vue({
-		el:'#tradeapp',
-		components: {
-			TradeApp
-		},
-		render: h => h(TradeApp)
-
-	});
 }
 
 //LEVEL 3 APPLICATION FORM
@@ -140,7 +129,6 @@ if(~window.location.pathname.indexOf("level3")){
 
 //LEVEL 3 SUB-FORMS
 import VolunteerApp from './components/VolunteerApp.vue';
-import ReligionApp from './components/ReligionApp.vue';
 if(~window.location.pathname.indexOf("level3")){
 	const volunteerapp = new Vue({
 		el:'#volunteerapp',
@@ -148,14 +136,6 @@ if(~window.location.pathname.indexOf("level3")){
 			VolunteerApp
 		},
 		render: h=> h(VolunteerApp)
-	});
-
-	const religionapp = new Vue({
-	el:'#religionapp',
-	components: {
-		ReligionApp
-	},
-	render: h=> h(ReligionApp)
 	});
 }
 
@@ -252,12 +232,23 @@ if(~window.location.pathname.indexOf("level7")){
 
 
 //LEVEL 8 - SUB-FORMS
+import Level8App from './components/Level8App.vue';
 import NoPardonApp from './components/NoPardonApp.vue';
 import YouthCrimeApp from './components/YouthCrimeApp.vue';
 import NoCitationApp from './components/NoCitationApp.vue';
 import CitationApp from './components/CitationApp.vue';
 
 if(~window.location.pathname.indexOf("level8")){
+
+//LEVEL8 FORM	
+	const level8app = new Vue({
+		el:'#level8app',
+		components: {
+			Level8App
+		},
+		render: h => h(Level8App)
+
+	});
 
 //NO-PARDONS SUB-FORM FOR LEVEL 8
 	const nopardonapp = new Vue({

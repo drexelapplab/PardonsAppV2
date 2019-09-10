@@ -22,14 +22,6 @@
             $("#retschoolForm").hide();
             //$("#newapp").show();
         }
-        function showTradeSchool() {
-            $("#tradeForm").show();
-            //$("#newapp").hide();
-        }
-        function hideTradeSchool() {
-            $("#tradeForm").hide();
-            //$("#newapp").show();
-        }
         function showRecommend() {
             $("#recommendForm").show();
             //$("#newapp").hide();

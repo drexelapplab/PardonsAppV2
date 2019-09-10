@@ -20,7 +20,7 @@ class NoCitationsController extends Controller
 
 
     	$nocitationObj = new NoCitation();
-    	$nocitationObj->nocitation_date = Carbon::createFromFormat('m/d/Y', $request('nocitation_date'));
+    	$nocitationObj->nocitations_date = Carbon::createFromFormat('m/d/Y', $request('nocitation_date'));
     	$nocitationObj->location = $request('location');
     	$nocitationObj->offense = $request('offense');
     	$nocitationObj->disposition = $request('disposition');

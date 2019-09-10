@@ -21,7 +21,7 @@
                     <div class="card-text">
                         <p>The Board of Pardons wants to know what you have done with yourself after you finished serving your sentence.  In this section, you'll be asked about whether you've gone back to school, learned any new trade, and have been successful at getting and holding jobs.
                         </p>
-                        <p>You are not required to hae done any of these things before you ask for a parodon; but if you have, your success might help persuade the Board of Pardons that you have earned a pardon.  If you have not yet done these things, you might think about doing them before you apply for a pardon.
+                        <p>You are not required to have done any of these things before you ask for a parodon; but if you have, your success might help persuade the Board of Pardons that you have earned a pardon.  If you have not yet done these things, you might think about doing them before you apply for a pardon.
                         </p>
                         <p class="" ><b>Tell us about the job(s) you have now.</b> If you don't have a job today, tell us about the last job you had.</p>
                     </div>
@@ -33,7 +33,7 @@
                     <h5 class="card-title text-warning">WORK EXPERIENCE</h5>
                     <div class="card-text">                      
                                 <div class="form-group">
-                                    <label for="job_how_long">For how long, after you completed your sentence, have you had a job?</label>
+                                    <label for="job_how_long">Since your conviction, have you been able to work?</label>
                                     <select v-model="job_how_long" style="width:30%;" class="form-control">
                                         <option>Every Year</option>
                                         <option>Almost Every Year</option>
@@ -65,28 +65,6 @@
                     </div>
                     <div id="retschoolForm" class="form-group" v-show="retschool_status == 'Yes'">
                         <div id="educationapp"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card text-white bg-secondary mb-3">
-            <div class="card-body">
-                <h5 class="card-title text-warning">TRADES</h5>
-                <div class="card-text">
-                    <div class="form-group">
-                        <p>
-                            Have you learned a trade since you've served your sentence?
-                        </p>
-
-                        <label for="trade_status">
-                            <input v-model="trade_status" onclick="showTradeSchool()" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="trade_status == 'Yes'" />Yes&nbsp;&nbsp;
-                        </label>
-                        <label for="trade_status">
-                            <input v-model="trade_status" style="margin:5px;" onclick="hideTradeSchool()" type="radio" class="radio-inline" value="No" :checked="trade_status == 'No'"/>No
-                        </label>
-                    </div>
-                    <div id="tradeForm" class="form-group" v-show="trade_status == 'Yes'">
-                        <div id="tradeapp"></div>
                     </div>
                 </div>
             </div>
@@ -155,7 +133,6 @@
             id: $("#appid").attr("appid"),
             job_how_long: '',
             retschool_status: '',
-            trade_status: '',
             rec_status: '',
             con_status: '',
             con_descr: '',
@@ -168,10 +145,9 @@
     methods: {
         mounted() {
         //get data for app_id form
-        window.axios.get(`/api/application/`+this.id).then(({ data }) => {
+        window.axios.get('/api/application/'+this.id).then(({ data }) => {
                     this.job_how_long = data[0].job_how_long;
                     this.retschool_status= data[0].retschool_status
-                    this.trade_status = data[0].trade_status;
                     this.rec_status = data[0].rec_status;
                     this.con_status = data[0].con_status;
                     this.con_descr = data[0].con_descr;
@@ -192,25 +168,20 @@
         this.checkForm(); //validate form
         //if no errors then update data
         if(!this.errors.length){
-            window.axios.put(`/api/applications/`+this.id, {id: this.id, job_how_long: this.job_how_long, retschool_status: this.retschool_status, trade_status: this.trade_status, rec_status: this.rec_status, con_status: this.con_status, con_descr: this.con_descr, level: this.level, savelevel: this.savelevel }).then(() => { 
+            window.axios.put(`/api/applications/`+this.id, {id: this.id, job_how_long: this.job_how_long, retschool_status: this.retschool_status, rec_status: this.rec_status, con_status: this.con_status, con_descr: this.con_descr, level: this.level, savelevel: this.savelevel }).then(() => { 
                 //display success message
                 this.successmsg = 'success';
-                
             });
         }
 
       },
       //validate form fields - add errors to the error array
       checkForm: function(e) {
-        this.errors = [];
         if(!this.job_how_long){
             this.errors.push('How long have you held a job?');
         }
         if(!this.retschool_status){
             this.errors.push('Did you return to school?');
-        }
-        if(!this.trade_status){
-            this.errors.push('Did you learn a trade?');
         }
         if(!this.rec_status){
             this.errors.push('Do you have any recommendations?');

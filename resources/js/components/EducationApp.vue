@@ -1,5 +1,13 @@
 <template>
 	<div id="app">
+	<div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+            <button type="button" class="close" v-on:click="errors = []">&times;</button>
+            <strong>Please correct the following errors:</strong>
+            <ul>
+                <li v-for="error in errors">{{ error }}</li>
+            </ul>
+        </div>
+
 		<table style="width:75%" class="table table-hover">
             <thead>
                 <tr class="table-info">
@@ -19,7 +27,19 @@
 		</table>
 	<form id="Educationform" @submit.prevent="formSubmit">
 	    <div class="form-group">
-	    	<input v-model="edtypefield" type="hidden" value="school">
+	    	<p>What type of school did you attend?</p>
+	    	<label for="edtype">
+                <input v-model="edtype" style="margin:5px;" type="radio" class="radio-inline" value="GED Program" />GED Program&nbsp;&nbsp;
+            </label>
+            <label for="edtype">
+                <input v-model="edtype" style="margin:5px;" type="radio" class="radio-inline" value="Professional Certification" />Professional Certification
+            </label>
+            <label for="edtype">
+                <input v-model="edtype" style="margin:5px;" type="radio" class="radio-inline" value="Trade School" />Trade School
+            </label>
+            <label for="edtypefield">
+                <input v-model="edtype" style="margin:5px;" type="radio" class="radio-inline" value="College" />College
+            </label>
 	    	<label for="education_datefield">When did you start?</label>
 	    	<input v-model="education_datefield" style="width:25%;" class="form-control">
 		    <label for="locationfield">Where did you go back to school?</label>
@@ -76,8 +96,9 @@
 		data() {
 				return {
 					educations: [],
-					app_id: $("#appid").attr("appid"), //from appid in blade 					
-					edtypefield: 'school',
+					app_id: $("#appid").attr("appid"), //from appid in blade 			
+					errors: [],
+					edtype: '',
 					education_datefield:'',
 					locationfield: '',
 					programfield: '',
@@ -92,7 +113,7 @@
 			formSubmit: function(event) {
 		        axios.post('/api/educations/store', ({ 
 		        	app_id: this.app_id,
-		        	edtype: this.edtypefield,
+		        	edtype: this.edtype,
 		        	education_date: this.education_datefield,
 		        	location: this.locationfield,
 		        	program: this.programfield,
@@ -102,7 +123,7 @@
 		        	 }))
 		        .then(({ data }) => {
 		          this.educations.push(new Education(data));
-		          //this.edtypefield = '';
+		          this.edtype = '';
 		          this.education_datefield = '';
 		          this.locationfield = '';
 		          this.programfield = '';
@@ -110,7 +131,19 @@
 		          this.finishfield = '';
 		          this.certfield = '';
 		          event.target.reset();
-		        });
+		        })
+		        .catch((error) => {
+			        if (error.response) {
+			            console.log(error.response.data);
+			            console.log(error.response.status);
+			            console.log(error.response.headers);
+			        } else if (error.request) {
+			            console.log(error.request);
+			        } else {
+			            console.log('Error', error.message);
+			        }
+			        console.log(error.config);;
+			    });
 			},
 			read() {
 //TODO FORMAT EDUCATION DATE
