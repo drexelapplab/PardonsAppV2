@@ -8,7 +8,7 @@ use Carbon\Carbon;
 class Nopardon extends Model
 {
     //protect date fields to return proper date format
-    protected $dates = ['nopardon_date'];
+    protected $table = 'nopardons';
 
     public function getNopardonDateAttribute($dates)
     {

@@ -58,21 +58,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-       <div class="card text-white bg-secondary mb-3">            
-            <div class="card-body">
-                <h5 class="card-title text-warning">RELIGIOUS WORK</h5>
-                <div class="card-text">
-                    <div class="form-group">
-                            <input v-model="rel_status" style="margin:5px;" onclick="showRelForm()" type="radio" class="radio-inline" value="Yes" :checked="rel_status == 'Yes'" />Yes&nbsp;&nbsp;
-                            <input v-model="rel_status" style="margin:5px;" onclick="hideRelForm()" type="radio" class="radio-inline" value="No" :checked="rel_status == 'No'" />No
-                    </div>
-                    <div id="relForm" v-show="rel_status == 'Yes'">
-                        <div id="religionapp"></div>
-                    </div>
-                </div>
-            </div>
-        </div>                  
+        </div>                
         <div class="row form-group">
             <div style="float:left;" class="col-md-6">
               <a :href="'/applications/level2/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 2</a>
@@ -84,12 +70,10 @@
     </form>
     </div>
 </template>
-
 <script>
-  function Level3 ({id, vol_status, rel_status, status}) {
+  function Level3 ({id, vol_status, status}) {
     this.id = id;
     this.vol_status = vol_status;
-    this.rel_status = rel_status;
     this.level = status;
   }
 
@@ -104,7 +88,6 @@
             nexturl: '/applications/level4/'+$("#appid").attr("appid"),
             backurl: '/applications/level2/'+$("#appid").attr("appid"),
             vol_status: '',
-            rel_status: '',
             level: '',
             savelevel: '3',
             successmsg: ''
@@ -115,7 +98,6 @@
         //get data for app_id form
         window.axios.get(`/api/application/`+this.id).then(({ data }) => {
                     this.vol_status = data[0].vol_status;
-                    this.rel_status = data[0].rel_status;
                     });
 
       },
@@ -132,7 +114,7 @@
 
         //if no errors then update data
         if(!this.errors.length){
-            window.axios.put(`/api/applications/`+this.id, {id: this.id, vol_status: this.vol_status, rel_status: this.rel_status,level: this.level, savelevel: this.savelevel }).then(() => { 
+            window.axios.put(`/api/applications/`+this.id, {id: this.id, vol_status: this.vol_status, level: this.level, savelevel: this.savelevel }).then(() => { 
                 //display success message
                 this.successmsg = 'success';
             });
@@ -144,10 +126,7 @@
         this.errors = [];
         if(!this.vol_status){
             this.errors.push('Have you volunteered?');
-        }
-        if(!this.rel_status){
-            this.errors.push('Do you volunteer in a place of worship?');
-        }         
+        }     
         //e.preventDefault();
       }
     },

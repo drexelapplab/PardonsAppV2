@@ -1,5 +1,13 @@
 <template>
 	<div id="app">
+	<div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+            <button type="button" class="close" v-on:click="errors = []">&times;</button>
+            <strong>Please correct the following errors:</strong>
+            <ul>
+                <li v-for="error in errors">{{ error }}</li>
+            </ul>
+        </div>
+
 		<table style="width:75%" class="table table-hover">
             <thead>
                 <tr class="table-info">
@@ -61,6 +69,7 @@
 		data() {
 				return {
 					recommends: [],
+					errors: [],
 					app_id: $("#appid").attr("appid"), //from appid in blade template
 					typefield:'',
 					namefield: '',

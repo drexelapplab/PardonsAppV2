@@ -76,7 +76,7 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="race">
-                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="White/Caucaion" />
+                                        <input v-model="race" style="margin:5px;" type="radio" class="radio-inline" value="White/Caucasion" />
                                             White/Caucasion
                                     </label>
                                     <label for="race">
@@ -147,16 +147,85 @@
                         <label for="phone2">Is there another number where you can be called?<br /> Like at work or through a friend?</label>
                         <input v-model="phone2" style="width:55%;" type="text" class="form-control" />
                     </div>
-
+                    <p>
+                        Please enter information regarding your representation.
+                    </p>
+                    <div class="form-group">
+                        <p style="width:35%;">
+                            Please enter who is going to be representing you.
+                        </p>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="representation">
+                                        <input v-model="representation" style="margin:5px;" type="radio" class="radio-inline" value="Self" />
+                                            Self
+                                    </label>
+                                    <label for="representation">
+                                        <input v-model="representation" style="margin:5px;" type="radio" class="radio-inline" value="Friend" />
+                                            Friend
+                                    </label>
+                                    <label for="representation">
+                                        <input v-model="representation" style="margin:5px;" type="radio" class="radio-inline" value="Family" />
+                                            Family
+                                    </label><br />
+                                    <label for="representation">
+                                        <input v-model="representation" style="margin:5px;" type="radio" class="radio-inline" value="Attorney">
+                                            Attorney
+                                    </label>
+                                    <label for="representation">
+                                        <input v-model="representation" style="margin:5px;" type="radio" class="radio-inline" value="Board" />
+                                            Board
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">    
+                        <label for="repname">Please enter the name of your representative. </label>
+                        <input v-model="rep_name" style="width:55%;" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <p style="width:45%;" class="">
+                            What's the address of your representative?
+                        </p>
+                        <div class="form-group">
+                            <label for="repadd">Number and Street:</label>
+                            <input v-model="rep_address" style="width:55%;" type="text" size="10" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="repadd2">Apartment Number:</label>
+                            <input v-model="rep_address2" style="width:55%;" type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="repcity">Town or City:</label>
+                            <input v-model="rep_city" style="width:55%;" type="text" class="form-control" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="repstate">State:</label>
+                            <input v-model="rep_state" style="width:10%;" type="text"class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="repzipcode">Zip Code:</label>
+                            <input v-model="rep_zip" style="width:35%;" type="text" class="form-control" size="2" required />
+                        </div>
+                    </div>
+                    <div class="form-group">    
+                        <label for="repphone">What's the phone number of your representative?</label>
+                        <input v-model="rep_phone" style="width:55%;" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">    
+                        <label for="repemail">What is the email address of your representative?</label>
+                        <input v-model="rep_email" style="width:55%;" type="text" class="form-control" />
+                    </div>
                     <div class="row">
                         <div class="form-group">
-                            
                             <button style="float:right;margin:20px;" class="btn btn-info">
                                 Next - Level 2
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>  
             </div>
         </div>
     </form>
@@ -188,6 +257,15 @@
             zipcode: '', 
             phone: '',
             phone2: '',
+            representation: '',
+            rep_name: '',
+            rep_address: '',
+            rep_address2: '',
+            rep_city: '',
+            rep_state: '',
+            rep_zip: '',
+            rep_phone: '',
+            rep_email: '',
             level: '',
             successmsg: '',
             nexturl: '',
@@ -216,6 +294,15 @@
                     this.phone = data[0].phone;
                     this.phone2 = data[0].phone2;
                     this.level = data[0].status;
+                    this.representation = data[0].representation
+                    this.rep_name = data[0].rep_name
+                    this.rep_address = data[0].rep_address
+                    this.rep_address2 = data[0].rep_address2
+                    this.rep_city = data[0].rep_city
+                    this.rep_state = data[0].rep_state
+                    this.rep_zip = data[0].rep_zip
+                    this.rep_phone = data[0].rep_phone
+                    this.rep_email = data[0].rep_email
                     });
 
       },
@@ -234,12 +321,23 @@
 
         //if no errors then update data
         if(!this.errors.length){
-            window.axios.put(`/api/applications/`+this.id, {id: this.id, first_name: this.first_name, middle_name: this.middle_name, last_name:this.last_name, suffix: this.suffix, nickname: this.nickname, birthdate: this.birthdate, ssn: this.ssn, gender: this.gender, race: this.race, address_time: this.address_time, address: this.address, address2: this.address2, state: this.state, city: this.city, zipcode: this.zipcode, phone: this.phone, phone2: this.phone2, level: this.level, savelevel: this.savelevel }).then(() => { 
+            window.axios.put(`/api/applications/`+this.id, {id: this.id, first_name: this.first_name, middle_name: this.middle_name, last_name:this.last_name, suffix: this.suffix, nickname: this.nickname, birthdate: this.birthdate, ssn: this.ssn, gender: this.gender, race: this.race, address_time: this.address_time, address: this.address, address2: this.address2, state: this.state, city: this.city, zipcode: this.zipcode, phone: this.phone, phone2: this.phone2, representation: this.representation, rep_name: this.repname, rep_address: this.rep_address, rep_address2: this.rep_address2, rep_city: this.rep_city, rep_state: this.rep_state, rep_zip: this.rep_zip, rep_phone: this.rep_phone, rep_email: this.rep_email, level: this.level, savelevel: this.savelevel }).then(() => { 
                 //display success message
                 this.successmsg = 'success';
                 
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);;
             });
-
         }
 
       },

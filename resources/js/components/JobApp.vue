@@ -1,11 +1,19 @@
 <template id="job-form">
 	<div id="app">
+	<div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+            <button type="button" class="close" v-on:click="errors = []">&times;</button>
+            <strong>Please correct the following errors:</strong>
+            <ul>
+                <li v-for="error in errors">{{ error }}</li>
+            </ul>
+        </div>
+
 		<table style="width:75%" class="table table-hover">
             <thead>
                 <tr class="table-info">
                     <th scope="res">Company</th>
                     <th scope="res">Position</th>
-                    <th scope="res">{{ tempdata }}</th>
+                    <th scope="res">&nbsp</th>
                 </tr>
             </thead>
 
@@ -77,7 +85,7 @@
 	import { checkdate } from '../app.js'
 
 	function Job({id, company, position, time, promotions, promo_descr, evaluation}) {
-		this.id = id;
+		this.id = id;	
 		this.company = company;
 		this.position = position;
 		this.time = time;
@@ -94,6 +102,7 @@
 		data() {
 				return {
 					jobs: [],
+					errors: [],
 					app_id: $("#appid").attr("appid"), //from appid in blade template
 					editstatus: '',
 					job_id: '',
@@ -103,14 +112,14 @@
 					promotionsfield: '',
 					promo_descrfield: '',
 					evaluationfield: '',
-					tempdata: [],
 					working:false
 				}
 				
 		},
 		methods: {
 			formSubmit: function(event) {
-				if(!editstatus)
+
+				if(!this.editstatus)
 				{
 	        		//send data to jobscontroller through api
 			        axios.post('/api/jobs/'+this.app_id, ({ 
@@ -133,9 +142,21 @@
 			          this.promo_descrfield = '';
 			          this.evaluationfield = '';
 			          event.target.reset();
-			        });
+			        })
+			        .catch((error) => {
+				        if (error.response) {
+				            console.log(error.response.data);
+				            console.log(error.response.status);
+				            console.log(error.response.headers);
+				        } else if (error.request) {
+				            console.log(error.request);
+				        } else {
+				            console.log('Error', error.message);
+				        }
+				        console.log(error.config);;
+				    });
 			    }
-			    if(editstatus == 'edit')
+			    if(this.editstatus == 'edit')
 			    {
 			    	//send job record to jobscontroller through api
 			    	axios.post('/api/job/'+this.job_id, ({
@@ -172,7 +193,6 @@
 			edit: function(j) {
 				this.editstatus = 'edit';
 				axios.get('/api/job/'+j).then(({ data }) => {
-					this.tempdata = data;
 					data.forEach(job => {
 					this.companyfield = job.company;
 					this.positionfield = job.position;

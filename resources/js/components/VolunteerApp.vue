@@ -1,5 +1,13 @@
 <template>
 	<div id="app">
+	<div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+            <button type="button" class="close" v-on:click="errors = []">&times;</button>
+            <strong>Please correct the following errors:</strong>
+            <ul>
+                <li v-for="error in errors">{{ error }}</li>
+            </ul>
+        </div>
+        
 		<table style="width:75%" class="table table-hover">
             <thead>
                 <tr class="table-info">
@@ -35,7 +43,7 @@
             </div>
             <div class="form-group">
             	<label for="vol_datefield">When did you start volunteering? <i>(mm/dd/yyyy)</i></label>
-            		<input v-model="vol_datefield" style="width:25%;" type="text" class="form-control" />
+            		<input v-model="vol_datefield" style="width:25%;" class="form-control" />
             	
             </div>
 
@@ -83,6 +91,7 @@
 		data() {
 				return {
 					volunteers: [],
+					errors: [],
 					app_id: $("#appid").attr("appid"), //from appid in blade template
 					vol_descrfield:'',
 					vol_datefield: '',
@@ -95,7 +104,6 @@
 		},
 		methods: {
 			formSubmit: function(event) {
-
 				this.checkForm(); //validate form
 				if(!this.errors.length){
 			        axios.post('/api/volunteers/'+this.app_id, ({ 
@@ -114,7 +122,19 @@
 						this.vol_organizefield = '';
 						this.vol_timefield = '';
 						event.target.reset();
-			        });
+			        })
+			        .catch((error) => {
+		                if (error.response) {
+		                    console.log(error.response.data);
+		                    console.log(error.response.status);
+		                    console.log(error.response.headers);
+		                } else if (error.request) {
+		                    console.log(error.request);
+		                } else {
+		                    console.log('Error', error.message);
+		                }
+		                console.log(error.config);;
+		            });
 			    }
 			},
 			read() {
@@ -139,7 +159,7 @@
             		this.errors.push('Date is required.');
         		}
         		if(!checkdate(this.vol_datefield)){
-            		this.errors.push('Please use MM/DD/YYYY for your dates.')
+            		this.errors.push('Please use MM/DD/YYYY for your dates.');
         		}
       		}
 		},

@@ -28,57 +28,59 @@
                         <div class="form-group">
                             <p style="width:75%;">Today, are you still drinking alcohol or using drugs?</p>
                             <label for="drink_status">
-                                <input v-model="drink_status" type="radio" class="form-control" value="Yes" :checked="drink_status == 'Yes'" />Yes&nbsp;&nbsp;
+                                <input v-model="drink_status" type="radio" style="margin:5px;" class="radio-inline" onclick="showDrinkForm()" value="Yes" :checked="drink_status == 'Yes'" />Yes&nbsp;&nbsp;
                             </label>
                             <label for="drink_status">
-                                <input v-model="drink_status" type="radio" class="form-control" value="No" :checked="drink_status == 'No'" />No
+                                <input v-model="drink_status" type="radio" class="radio-inline" style="margin:5px;" onclick="hideDrinkForm()" value="No" :checked="drink_status == 'No'" />No&nbsp;
                             </label>
                         </div>
-                        <div class="form-group">
-                            <label style="width:75%;" for="drink_time">How long has it been since you last drank alcohol?</label>
-                            <input v-model="drink_time"style="width:55%;" type="text" class="form-control"  />
-                        </div>
-                        <div class="form-group">
-                            <label style="width:75%;" for="drugs_time">How long has it been since you last used drugs?</label>
-                            <input v-model="drugs_time" style="width:55%;" type="text" class="form-control"  />
-                        </div>
-                        <div class="form-group">
-                            <p style="width:55%;">Did you ever go to some kind of program like Alcoholics Anonymous?</p>
-                            <label for="aaprogram_status">
-                                <input v-model="aaprogram_status" type="radio" class="form-control" value="Yes" :checked="aaprogram_status == 'Yes'" />Yes&nbsp;&nbsp;
-                            </label>
-                            <label for="aaprogram_status">
-                                <input v-model="aaprogram_status" type="radio" class="form-control" value="No" :checked="aaprogram_status == 'No'" />No
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label style="width:75%;" for="aaprogram_start">When did you start going?</label>
-                            <input v-model="aaprogram_start" style="width:55%;" type="text" class="form-control"  />
-                        </div>
-                        <div class="form-group">
-                            <p style="width:75%;">Are you still going?</p>
-                            <label for="aaprogram_still">
-                                <input v-model="aaprogram_still" type="radio" class="form-control" value="Yes" :checked="aaprogram_still == 'Yes'" />Yes&nbsp;&nbsp;
-                            </label>
-                            <label for="aaprogram_still">
-                                <input v-model="aaprogram_still" type="radio" class="form-control" name="aaprogram_still" value="No" :checked="aaprogram_still == 'No'" />No
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label style="width:75%;" for="aaprogram_stopped">When did you stop going?</label>
-                            <input v-model="aaprogram_stopped" style="width:55%;" type="text" class="form-control" />
-                        </div>
-                        <div class="form-group">
-                            <label style="width:75%;" for="aaprogram_how">If you stopped, how have you done since stopping?</label>
-                            <textarea v-model="aaprogram_how" style="width:55%;" class="form-control"></textarea>
+                        <div id="drinkForm" class="form-group" v-show="drink_status == 'Yes'">
+                            <div class="form-group">
+                                <label style="width:75%;" for="drink_time">How long has it been since you last drank alcohol?</label>
+                                <input v-model="drink_time"style="width:55%;" type="text" class="form-control"  />
+                            </div>
+                            <div class="form-group">
+                                <label style="width:75%;" for="drugs_time">How long has it been since you last used drugs?</label>
+                                <input v-model="drugs_time" style="width:55%;" type="text" class="form-control"  />
+                            </div>
+                            <div class="form-group">
+                                <p style="width:55%;">Did you ever go to some kind of program like Alcoholics Anonymous?</p>
+                                <label for="aaprogram_status">
+                                    <input v-model="aaprogram_status" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_status == 'Yes'" />Yes&nbsp;&nbsp;
+                                </label>
+                                <label for="aaprogram_status">
+                                    <input v-model="aaprogram_status" type="radio" style="margin:5px;" class="radio-inline" value="No" :checked="aaprogram_status == 'No'" />No&nbsp;
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label style="width:75%;" for="aaprogram_start">When did you start going?</label>
+                                <input v-model="aaprogram_start" style="width:55%;" type="text" class="form-control"  />
+                            </div>
+                            <div class="form-group">
+                                <p style="width:75%;">Are you still going?</p>
+                                <label for="aaprogram_still">
+                                    <input v-model="aaprogram_still" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_still == 'Yes'" />Yes&nbsp;&nbsp;
+                                </label>
+                                <label for="aaprogram_still">
+                                    <input v-model="aaprogram_still" type="radio" style="margin:5px;" class="radio-inline" name="aaprogram_still" value="No" :checked="aaprogram_still == 'No'" />No&nbsp;
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label style="width:75%;" for="aaprogram_stopped">When did you stop going?</label>
+                                <input v-model="aaprogram_stopped" style="width:55%;" type="text" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label style="width:75%;" for="aaprogram_how">If you stopped, how have you done since stopping?</label>
+                                <textarea v-model="aaprogram_how" style="width:55%;" class="form-control"></textarea>
+                            </div>
                         </div>
                         <div class="form-group">
                             <p style="width:75%;">Have you ever tried to help someone else who had a drug or alcohol problem?</p>
                             <label for="aaprogram_helped">
-                                <input v-model="aaprogram_helped" type="radio" class="form-control" value="Yes" :checked="aaprogram_helped == 'Yes'" />Yes&nbsp;&nbsp;
+                                <input v-model="aaprogram_helped" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_helped == 'Yes'" />Yes&nbsp;&nbsp;
                             </label>
                             <label for="aaprogram_helped">
-                                <input v-model="aaprogram_helped" type="radio" class="form-control" value="No" :checked="aaprogram_helped == 'No'" />No
+                                <input v-model="aaprogram_helped" type="radio" style="margin:5px;" class="radio-inline" value="No" :checked="aaprogram_helped == 'No'" />No&nbsp;
                             </label>
                         </div>
                         <div class="form-group">
@@ -170,13 +172,13 @@
         if(!this.drink_status){
             this.errors.push('Your drinking status is required.');
         }
-        if(!this.drink_time){
+        if(!this.drink_time && this.drink_status == 'Yes'){
             this.errors.push('Your drinking time frame is required.');
         }
-        if(!this.drugs_time){
+        if(!this.drugs_time && this.drink_status == 'Yes'){
             this.errors.push('Your drug use time frame is required.');
         }
-        if(!this.aaprogram_status){
+        if(!this.aaprogram_status && this.drink_status == 'Yes'){
             this.errors.push('Your AA Program status is reqiured');
         }
         if(!this.aaprogram_start && this.aaprogram_status == 'Yes'){

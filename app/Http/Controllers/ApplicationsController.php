@@ -39,11 +39,11 @@ class ApplicationsController extends Controller
         //STATUS
         $status = $user->status;
 
-        //get apps and take user to dashboard
-    
         $applications = Application::where('user_id', $user->id)->get();
+
+        //get apps and take user to dashboard
         
-        return view('dashboard', compact('applications','status'));      
+        return view('dashboard', compact('applications', 'status'));      
     }
 
     /**
@@ -127,14 +127,23 @@ class ApplicationsController extends Controller
             $application->ssn = $request->ssn;
             $application->gender = $request->gender;
             $application->race = $request->race;
+            $application->address_time = $request->address_time;
             $application->address = $request->address;
             $application->address2 = $request->address2;
             $application->city = $request->city;
             $application->zipcode = $request->zipcode;
-            $application->county = $request->county;
             $application->address_time = $request->address_time;
             $application->phone = $request->phone;
             $application->phone2 = $request->phone2;
+            $application->representation = $request->representation;
+            $application->rep_name = $request->rep_name;
+            $application->rep_address = $request->rep_address;
+            $application->rep_address2 = $request->rep_address2;
+            $application->rep_city = $request->rep_city;
+            $application->rep_state = $request->rep_state;
+            $application->rep_zip = $request->rep_zip;
+            $application->rep_phone = $request->rep_phone;
+            $application->rep_email = $request->rep_email;
             if($application->status < $request->level){
                 $application->status = $request->level;
             } 
@@ -146,7 +155,6 @@ class ApplicationsController extends Controller
         {
             $application->job_how_long = $request->job_how_long;
             $application->retschool_status = $request->retschool_status;
-            $application->trade_status = $request->trade_status;
             $application->rec_status = $request->rec_status;
             $application->con_status = $request->con_status;
             $application->con_descr = $request->con_descr;
@@ -161,7 +169,6 @@ class ApplicationsController extends Controller
         if($request->savelevel == '3')
         {
             $application->vol_status = $request->vol_staus;
-            $application->rel_status = $request->rel_status;
             if($application->status < $request->level){
                 $application->status = $request->level;
             } 
@@ -172,7 +179,6 @@ class ApplicationsController extends Controller
 
         if($request->savelevel == '4')
         {
-            $application->what_learned = $request->what_learned;
             $application->not_repeat = $request->not_repeat;
             $application->choice = $request->choice;
             $application->teach = $request->teach;
@@ -224,6 +230,14 @@ class ApplicationsController extends Controller
             } 
             $application->save();
             $savelevel = 'saved level 7';
+        }
+        if($request->savelevel == '8')
+        {
+            if($application->status < $request->level){
+                $application->status = $request->level;
+            } 
+            $application->save();
+            $savelevel = 'saved level 8';
         }
 
        return response($savelevel, Response::HTTP_CREATED);

@@ -59,13 +59,12 @@
 		},
 		methods: {
 			create() {
-
 		        axios.post('/api/nocitations/store', ({ 
 		        	app_id: this.app_id,
 		        	nocitations_date: this.nocitations_datefield,
 		        	location: this.locationfield,
 		        	offense: this.offensefield,
-		        	result: this.dispositionfield
+		        	disposition: this.dispositionfield
 		        	 }))
 		        .then(({ data }) => {
 		          this.nocitations.push({ data });

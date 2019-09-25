@@ -18,8 +18,10 @@ class CreateConvictionsTable extends Migration
             $table->integer('app_id');
             $table->string('county');
             $table->string('docket');
-            $table->date('con_date');
+            $table->date('inc_date');
+            $table->date('arr_date');
             $table->text('incident');
+            $table->text('offenses');
             $table->timestamps();
         });
     }

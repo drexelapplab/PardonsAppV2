@@ -21,11 +21,13 @@ class ConvictionsController extends Controller
 
 
     	$convictionObj = new Conviction();
-    	$convictionObj->con_date = Carbon::createFromFormat('m/d/Y', $request->con_date);
+    	$convictionObj->inc_date = Carbon::createFromFormat('m/d/Y', $request->inc_date);
+        $convictionObj->arr_date = Carbon::createFromFormat('m/d/Y', $request->arr_date);
     	$convictionObj->docket = $request->docket;
     	$convictionObj->county = $request->county;
     	$convictionObj->incident = $request->incident;
         $convictionObj->app_id = $request->app_id;
+        $convictionObj->offenses = $request->offenses;
     	$convictionObj->save();
 
     	//\Session::flash('flash_message', 'Record added!'):  	
