@@ -15,21 +15,16 @@ class YouthCrimesController extends Controller
     	return response(YouthCrime::all()->jsonSerialize(), Response::HTTP_OK);
     }
 
-    public function store()
+    public function store(Request $request)
     {
-
-    	$this->validate(request(), [
-    	 	'youthcrime_date' => 'required',
-    	 	'location' => 'required',
-    	 	'offense' => 'required'
-    	 ]);
-
     	$youthcrimeObj = new YouthCrime();
-    	$youthcrimeObj->youthcrime_date = Carbon::createFromFormat('m/d/Y', $request('youthcrime_date'));
-    	$youthcrimeObj->location = $request('location');
-    	$youthcrimeObj->offense = $request('offense');
-    	$youthcrimeObj->adjudicated = $request('adjudicated');
-    	$youthcrimeObj->disposition = $request('disposition');
+        $youthcrimeObj->app_id = $request['app_id'];
+    	$youthcrimeObj->youth_date = $request['youth_date'];
+    	$youthcrimeObj->county = $request['county'];
+        $youthcrimeObj->state = $request['state'];
+    	$youthcrimeObj->offense = $request['offense'];
+    	$youthcrimeObj->adjudicated = $request['adjudicated'];
+    	$youthcrimeObj->sentence = $request['sentence'];
     	$youthcrimeObj->save();
 
     	//\Session::flash('flash_message', 'Record added!'):  	

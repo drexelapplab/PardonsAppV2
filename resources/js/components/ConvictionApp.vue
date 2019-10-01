@@ -41,34 +41,21 @@
 					    <input v-model="arr_datefield" style="width:35%;" class="form-control">
 					    <label for="docketfield">Docket Number</label>
 					    <input v-model="docketfield" style="width:45%;" class="form-control" >
-					    <label for="countyfield">County:</label>
-					    <input v-model="countyfield" style="width:45%;" class="form-control">
 					    <label for="incidentfield" style="width:55%;">What happened that caused you to be arrested?  Give the facts about what happened.<strong>BE SURE TO SAY HOW YOU WERE INVOLVED.</strong> If alcohol or drugs were involved, be sure to explain how they contributed to the choices you made and what you did wrong.</label>
-					    <textarea v-model="incidentfield" style="width:55%;" class="form-control"></textarea>
-					    <label for="offensesfield" style="width:55%;">Give a list of offenses associated with your incident.</label>
-					    <textarea v-model="offensesfield" style="width:55%;" class="form-control"></textarea>    
+					    <textarea v-model="incidentfield" style="width:55%;" class="form-control"></textarea>\   
 					    <button style="margin-top:10px;" class="btn btn-info">Save</button>
 					</form>
 					</div>
 					<div id="condetails" class="form-group" style="display:none;padding-top:20px;">	
 			            <h5 class="card-title text-warning">QUESTIONS ABOUT THE CRIMES IN YOUR CONVICTION</h5>
 	
-			                <p class="h5">What crimes were you convicted of?</p>
+			                <p class="h5">What offenses were associated with this incident?</p>
 			                <div class="card text-white card-warning">
 			                    <div class="card-body">
-			                        <p class="card-title">Add each crime and sentence one at a time below.</p>
+			                        <p class="card-title">Add each offense related to the incident below.</p>
 			                
 			                        <div class="card-text">
 			                            <div id="crimeapp" :conid="con_id"></div>
-			                        </div>
-			                    </div>
-			                </div>
-			                <p class="h5">What offenses were you not <strong>NOT</strong> convicted of?</p>
-			                <div class="card text-white card-warning">
-			                    <div class="card-body">
-			                        <p class="card-title">Add each offense you weren't convicted of below.<br />  Let us know what the judge did with this charge.  What was the result?</p>
-			                        <div class="card-text">
-			                        	<div id="nocrimeapp" :conid="con_id"></div>
 			                        </div>
 			                    </div>
 			                </div>
@@ -84,14 +71,12 @@
 <script>
 	import { checkdate } from '../app.js'
 
-	function Conviction({id, inc_date, arr_date, docket, incident, county, offenses}) {
+	function Conviction({id, inc_date, arr_date, docket, incident}) {
 		this.id = id;
 		this.inc_date = inc_date;
 		this.arr_date = arr_date
 		this.docket = docket;
 		this.incident = incident;
-		this.county = county;
-		this.offenses = offenses;
 	}
 
 	import convictionComponent from './ConvictionComponent.vue';
@@ -106,9 +91,7 @@
 					inc_datefield: '',
 					arr_datefield: '',
 					docketfield: '',
-					countyfield: '',
 					incidentfield: '',
-					offensesfield: '',
 					working:false
 				}
 				
@@ -124,9 +107,7 @@
 			        	inc_date: this.inc_datefield,
 			        	arr_date: this.arr_datefield,
 			        	docket: this.docketfield,
-			        	county: this.countyfield,
 			        	incident: this.incidentfield,
-			        	offenses: this.offensesfield,
 			        	app_id: this.app_id
 			        	 }))
 			        .then(({ data }) => {
@@ -135,9 +116,7 @@
 			          this.inc_datefield = '';
 			          this.arr_datefield = '';
 			          this.docketfield = '';
-			          this.countyfield = '';
 			          this.incidentfield = '';
-			          this.offensesfield = '';
 			          this.successmsg = '';
 
 			        //display other forms
@@ -192,14 +171,8 @@
 		        if(!this.docketfield){
 		            this.errors.push("Please provide a docket number.");
 		        }
-		        if(!this.countyfield){
-		        	this.errors.push("Please provide a county.");
-		        }
 		        if(!this.incidentfield){
 		        	this.errors.push("Please provide a description of your conviction.");
-		        }
-		        if(!this.offensesfield){
-		        	this.errors.push("Please give a list of offenses associated with the incident.");
 		        }
       
       		}

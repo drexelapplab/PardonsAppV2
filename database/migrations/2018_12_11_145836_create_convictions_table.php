@@ -16,12 +16,10 @@ class CreateConvictionsTable extends Migration
         Schema::create('convictions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('app_id');
-            $table->string('county');
             $table->string('docket');
             $table->date('inc_date');
             $table->date('arr_date');
             $table->text('incident');
-            $table->text('offenses');
             $table->timestamps();
         });
     }

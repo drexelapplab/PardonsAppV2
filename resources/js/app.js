@@ -5,7 +5,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require( 'jquery' );
+require('jquery');
 
 require('./bootstrap');
 window.Vue = require('vue');
@@ -185,7 +185,6 @@ if(~window.location.pathname.indexOf("level6")){
 import Level7App from './components/Level7App.vue';
 import ConvictionApp from './components/ConvictionApp.vue';
 import CrimeApp from './components/CrimeApp.vue';
-import NoCrimeApp from './components/NoCrimeApp.vue';
 
 if(~window.location.pathname.indexOf("level7")){
 
@@ -218,24 +217,13 @@ if(~window.location.pathname.indexOf("level7")){
 		render: h => h(CrimeApp)
 
 	});
-
-//NO-CRIMES SUB-FORM FOR LEVEL 7
-
-	const nocrimeapp = new Vue({
-		el:'#nocrimeapp',
-		components: {
-			NoCrimeApp
-		},
-		render: h => h(NoCrimeApp)
-	});
 }
 
 
 //LEVEL 8 - SUB-FORMS
 import Level8App from './components/Level8App.vue';
-import NoPardonApp from './components/NoPardonApp.vue';
 import YouthCrimeApp from './components/YouthCrimeApp.vue';
-import NoCitationApp from './components/NoCitationApp.vue';
+import AdultCrimeApp from './components/AdultCrimeApp.vue';
 import CitationApp from './components/CitationApp.vue';
 
 if(~window.location.pathname.indexOf("level8")){
@@ -250,17 +238,7 @@ if(~window.location.pathname.indexOf("level8")){
 
 	});
 
-//NO-PARDONS SUB-FORM FOR LEVEL 8
-	const nopardonapp = new Vue({
-		el:'#nopardonsapp',
-		components: {
-			NoPardonApp
-		},
-		render: h => h(NoPardonApp)
-	});
-
 //YOUTH CRIMES SUB-FORM FOR LEVEL 8
-
 	const youthcrimeapp = new Vue({
 		el:'#youthcrimesapp',
 		components: {
@@ -269,7 +247,23 @@ if(~window.location.pathname.indexOf("level8")){
 		render: h => h(YouthCrimeApp)
 	});
 
+//ADULT CRIMES SUB-FORM FOR LEVEL 8
+	const adultcrimeapp = new Vue({
+		el:'#adultcrimesapp',
+		components: {
+			AdultCrimeApp
+		},
+		render: h => h(AdultCrimeApp)
+	});
 
+//CITATIONS SUB-FORM FOR LEVEL 8
+	const citationsapp = new Vue({
+		el:'#citationsapp',
+		components: {
+			CitationApp
+		},
+		render: h => h(CitationApp)
+	});	
 }
 
 //LEVEL 9 SUB-FORMS

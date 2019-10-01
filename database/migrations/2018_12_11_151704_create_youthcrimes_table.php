@@ -16,11 +16,12 @@ class CreateYouthcrimesTable extends Migration
         Schema::create('youthcrimes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('app_id');
-            $table->date('youth_date');
-            $table->string('location');
+            $table->string('youth_date');
+            $table->string('county');
+            $table->string('state');
             $table->string('offense');
             $table->string('adjudicated');
-            $table->string('disposition');
+            $table->string('sentence');
             $table->timestamps();
         });
     }

@@ -22,10 +22,7 @@
     </script>
     <appid id="appid" appid="{{$application->id}}"></appid>
     <div class="container">
-        
-
             <div id="level3app"></div>
-
     </div>
 
 </div>

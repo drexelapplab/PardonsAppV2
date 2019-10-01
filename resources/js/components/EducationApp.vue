@@ -1,4 +1,4 @@
-<template>
+ <template>
 	<div id="app">
 	<div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>

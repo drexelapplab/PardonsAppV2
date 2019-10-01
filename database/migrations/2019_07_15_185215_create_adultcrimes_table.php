@@ -16,10 +16,11 @@ class CreateAdultcrimesTable extends Migration
         Schema::create('adultcrimes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('app_id');
-            $table->date('adult_date');
-            $table->string('location');
+            $table->string('adult_date');
+            $table->string('charges');
+            $table->string('state');
             $table->string('offense');
-            $table->string('disposition');
+            $table->string('sentence');
             $table->timestamps();
         });
     }

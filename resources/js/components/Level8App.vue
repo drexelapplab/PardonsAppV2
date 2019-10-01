@@ -17,13 +17,10 @@
             <form id="level8Form" @submit.prevent="formSubmit">
                 <div class="card text-white bg-secondary mb-3">
                     <div class="card-body">
-                        <h4 class="card-title text-warning">LEVEL 8: CONVICTIONS YOU DON'T WANT A PARDON FOR</h4>
+                        <h4 class="card-title text-warning">LEVEL 8: ADDITIONAL CHARGES OR INCIDENTS</h4>
                         <div class="card-text">
                             <p>
-                                There’s no limit on the number of convictions you can ask for a pardon for at one time. The Board of Pardons is going to look at your entire record – all the crimes in Pennsylvania that you’ve been charged with and been found guilty of.
-                            </p>
-                            <p>
-                                They won’t think you are greedy if you ask for pardons for all of them.  If you want to add another, click <a class="text-info" href="/level7/edit">HERE.</a>  But if you don't have a reason you don't want to ask for a pardon for one or more crimes you've been convictged of, this is the section when you talk about those other crimes.
+                                Text regarding additional charges or incidents.
                             </p>
                             
                         </div>
@@ -31,30 +28,39 @@
                 </div>
                 <div class="card text-white bg-secondary mb-3" style="max-width: 40rem;">
                     <div class="card-body">
-                        <h5 class="card-title text-warning">CONVICTIONS YOU'RE <span class="text-info">NOT</span> ASKING A PARDON FOR</h5>
+                        <h5 class="card-title text-warning">JUVENILE COURT</h5>
                         <div class="card-text">
-                            <div id="nopardonsapp"></div>
+                            <p>Next, we are going to ask you about offenses you were charged with when you were a child, that would have gone to Juvenile Court.</p>
+                            <div id="youthcrimesapp"></div>
                         </div>
                     </div>
                 </div>
-
-            <div class="card text-white bg-secondary mb-3" style="max-width: 40rem;">
-                <div class="card-body">
-                    <h5 class="card-title text-warning">JUVENILE COURT</h5>
-                    <div class="card-text">
-                        <p>Next, we are going to ask you about offenses you were charged with when you were a child, that would have gone to Juvenile Court.</p>
-                        <div id="youthcrimesapp"></div>
+                <div class="card text-white bg-secondary mb-3" style="max-width: 40rem;">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">ADULT CHARGES</h5>
+                        <div class="card-text">
+                            <p>Next, we are going to ask you about offenses you were charged with when you were an adult.</p>
+                            <div id="adultcrimesapp"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row form-group">
-                <div style="float:left;" class="col-md-6">
-                  <a :href="'/applications/level7/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 7</a>
+                <div class="card text-white bg-secondary mb-3" style="max-width: 40rem;">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">TRAFFIC CITATIONS</h5>
+                        <div class="card-text">
+                            <p>Now, the last area: TRAFFIC CITATIONS. We are NOT asking about parking tickets.  The Board of Pardons will be getting a copy of your Pennsylvania Driving Record.  You need to get your record to answer the questions in this section.</p>
+                            <div id="citationsapp"></div>
+                        </div>
+                    </div>
                 </div>
-                <div style="float:right;" class="col-md-6">
-                    <a href="level9" class="btn btn-info">NEXT - LEVEL 9</a>
+                <div class="row form-group">
+                    <div style="float:left;" class="col-md-6">
+                      <a :href="'/applications/level7/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 7</a>
+                    </div>
+                    <div style="float:right;" class="col-md-6">
+                        <class="btn btn-info">NEXT - LEVEL 9</a>
+                    </div>
                 </div>
-            </div>
         </form>
     </div>
 </template>

@@ -18,13 +18,11 @@ class CrimesController extends Controller
     {
 
     	$this->validate(request(), [
-    	 	'crime' => 'required',
-    	 	'sentence' => 'required'
+    	 	'crime' => 'required'
     	 ]);
 
     	$crimeObj = new Crime();
     	$crimeObj->crime = $request('crime');
-    	$crimeObj->sentence = $request('sentence');
     	$crimeObj->save();
 
     	//\Session::flash('flash_message', 'Record added!'):  	

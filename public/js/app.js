@@ -13463,6 +13463,110 @@ Popper.Defaults = Defaults;
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(1);
+var normalizeHeaderName = __webpack_require__(21);
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(8);
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(8);
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
+
+/***/ }),
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13494,18 +13598,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_ConvictionApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_11__components_ConvictionApp_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_CrimeApp_vue__ = __webpack_require__(109);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_CrimeApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_12__components_CrimeApp_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_NoCrimeApp_vue__ = __webpack_require__(115);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_NoCrimeApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13__components_NoCrimeApp_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_Level8App_vue__ = __webpack_require__(121);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_Level8App_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14__components_Level8App_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_NoPardonApp_vue__ = __webpack_require__(124);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_NoPardonApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15__components_NoPardonApp_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_YouthCrimeApp_vue__ = __webpack_require__(130);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_YouthCrimeApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16__components_YouthCrimeApp_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_NoCitationApp_vue__ = __webpack_require__(136);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_NoCitationApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_17__components_NoCitationApp_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_CitationApp_vue__ = __webpack_require__(142);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_CitationApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_18__components_CitationApp_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_Level8App_vue__ = __webpack_require__(115);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_Level8App_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13__components_Level8App_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_YouthCrimeApp_vue__ = __webpack_require__(118);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_YouthCrimeApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14__components_YouthCrimeApp_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_AdultCrimeApp_vue__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_AdultCrimeApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15__components_AdultCrimeApp_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_CitationApp_vue__ = __webpack_require__(130);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_CitationApp_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16__components_CitationApp_vue__);
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -13704,7 +13804,6 @@ if (~window.location.pathname.indexOf("level6")) {
 
 
 
-
 if (~window.location.pathname.indexOf("level7")) {
 
 	//LEVEL7 FORM	
@@ -13742,22 +13841,9 @@ if (~window.location.pathname.indexOf("level7")) {
 		}
 
 	});
-
-	//NO-CRIMES SUB-FORM FOR LEVEL 7
-
-	var nocrimeapp = new Vue({
-		el: '#nocrimeapp',
-		components: {
-			NoCrimeApp: __WEBPACK_IMPORTED_MODULE_13__components_NoCrimeApp_vue___default.a
-		},
-		render: function render(h) {
-			return h(__WEBPACK_IMPORTED_MODULE_13__components_NoCrimeApp_vue___default.a);
-		}
-	});
 }
 
 //LEVEL 8 - SUB-FORMS
-
 
 
 
@@ -13769,34 +13855,44 @@ if (~window.location.pathname.indexOf("level8")) {
 	var level8app = new Vue({
 		el: '#level8app',
 		components: {
-			Level8App: __WEBPACK_IMPORTED_MODULE_14__components_Level8App_vue___default.a
+			Level8App: __WEBPACK_IMPORTED_MODULE_13__components_Level8App_vue___default.a
 		},
 		render: function render(h) {
-			return h(__WEBPACK_IMPORTED_MODULE_14__components_Level8App_vue___default.a);
+			return h(__WEBPACK_IMPORTED_MODULE_13__components_Level8App_vue___default.a);
 		}
 
-	});
-
-	//NO-PARDONS SUB-FORM FOR LEVEL 8
-	var nopardonapp = new Vue({
-		el: '#nopardonsapp',
-		components: {
-			NoPardonApp: __WEBPACK_IMPORTED_MODULE_15__components_NoPardonApp_vue___default.a
-		},
-		render: function render(h) {
-			return h(__WEBPACK_IMPORTED_MODULE_15__components_NoPardonApp_vue___default.a);
-		}
 	});
 
 	//YOUTH CRIMES SUB-FORM FOR LEVEL 8
-
 	var youthcrimeapp = new Vue({
 		el: '#youthcrimesapp',
 		components: {
-			YouthCrimeApp: __WEBPACK_IMPORTED_MODULE_16__components_YouthCrimeApp_vue___default.a
+			YouthCrimeApp: __WEBPACK_IMPORTED_MODULE_14__components_YouthCrimeApp_vue___default.a
 		},
 		render: function render(h) {
-			return h(__WEBPACK_IMPORTED_MODULE_16__components_YouthCrimeApp_vue___default.a);
+			return h(__WEBPACK_IMPORTED_MODULE_14__components_YouthCrimeApp_vue___default.a);
+		}
+	});
+
+	//ADULT CRIMES SUB-FORM FOR LEVEL 8
+	var adultcrimeapp = new Vue({
+		el: '#adultcrimesapp',
+		components: {
+			AdultCrimeApp: __WEBPACK_IMPORTED_MODULE_15__components_AdultCrimeApp_vue___default.a
+		},
+		render: function render(h) {
+			return h(__WEBPACK_IMPORTED_MODULE_15__components_AdultCrimeApp_vue___default.a);
+		}
+	});
+
+	//CITATIONS SUB-FORM FOR LEVEL 8
+	var citationsapp = new Vue({
+		el: '#citationsapp',
+		components: {
+			CitationApp: __WEBPACK_IMPORTED_MODULE_16__components_CitationApp_vue___default.a
+		},
+		render: function render(h) {
+			return h(__WEBPACK_IMPORTED_MODULE_16__components_CitationApp_vue___default.a);
 		}
 	});
 }
@@ -13810,22 +13906,22 @@ if (~window.location.pathname.indexOf("level9")) {
 	var nocitationsapp = new Vue({
 		el: '#nocitationsapp',
 		components: {
-			NoCitationApp: __WEBPACK_IMPORTED_MODULE_17__components_NoCitationApp_vue___default.a
+			NoCitationApp: NoCitationApp
 		},
 		render: function render(h) {
-			return h(__WEBPACK_IMPORTED_MODULE_17__components_NoCitationApp_vue___default.a);
+			return h(NoCitationApp);
 		}
 	});
 
 	//CITATIONS SUB-FORM
 
-	var citationsapp = new Vue({
+	var _citationsapp = new Vue({
 		el: '#citationsapp',
 		components: {
-			CitationApp: __WEBPACK_IMPORTED_MODULE_18__components_CitationApp_vue___default.a
+			CitationApp: __WEBPACK_IMPORTED_MODULE_16__components_CitationApp_vue___default.a
 		},
 		render: function render(h) {
-			return h(__WEBPACK_IMPORTED_MODULE_18__components_CitationApp_vue___default.a);
+			return h(__WEBPACK_IMPORTED_MODULE_16__components_CitationApp_vue___default.a);
 		}
 	});
 }
@@ -13844,110 +13940,6 @@ function checkdate(d) {
 
 	return true;
 }
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(1);
-var normalizeHeaderName = __webpack_require__(21);
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(8);
-  } else if (typeof process !== 'undefined') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(8);
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch (e) { /* Ignore */ }
-    }
-    return data;
-  }],
-
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
 
 /***/ }),
 /* 7 */
@@ -35577,7 +35569,7 @@ module.exports = __webpack_require__(18);
 var utils = __webpack_require__(1);
 var bind = __webpack_require__(7);
 var Axios = __webpack_require__(20);
-var defaults = __webpack_require__(6);
+var defaults = __webpack_require__(5);
 
 /**
  * Create an instance of Axios
@@ -35660,7 +35652,7 @@ function isSlowBuffer (obj) {
 "use strict";
 
 
-var defaults = __webpack_require__(6);
+var defaults = __webpack_require__(5);
 var utils = __webpack_require__(1);
 var InterceptorManager = __webpack_require__(29);
 var dispatchRequest = __webpack_require__(30);
@@ -36199,7 +36191,7 @@ module.exports = InterceptorManager;
 var utils = __webpack_require__(1);
 var transformData = __webpack_require__(31);
 var isCancel = __webpack_require__(10);
-var defaults = __webpack_require__(6);
+var defaults = __webpack_require__(5);
 var isAbsoluteURL = __webpack_require__(32);
 var combineURLs = __webpack_require__(33);
 
@@ -36763,8 +36755,8 @@ function applyToTag (styleElement, obj) {
 /* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(5);
-module.exports = __webpack_require__(148);
+__webpack_require__(6);
+module.exports = __webpack_require__(136);
 
 
 /***/ }),
@@ -50466,7 +50458,7 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(6);
 //
 //
 //
@@ -53039,7 +53031,7 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(6);
 //
 //
 //
@@ -54306,7 +54298,7 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__EducationComponent_vue__ = __webpack_require__(78);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__EducationComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__EducationComponent_vue__);
 //
@@ -55573,7 +55565,7 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VolunteerComponent_vue__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__VolunteerComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__VolunteerComponent_vue__);
 //
@@ -59348,22 +59340,9 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ConvictionComponent_vue__ = __webpack_require__(105);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ConvictionComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__ConvictionComponent_vue__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -59442,17 +59421,13 @@ function Conviction(_ref) {
 	    inc_date = _ref.inc_date,
 	    arr_date = _ref.arr_date,
 	    docket = _ref.docket,
-	    incident = _ref.incident,
-	    county = _ref.county,
-	    offenses = _ref.offenses;
+	    incident = _ref.incident;
 
 	this.id = id;
 	this.inc_date = inc_date;
 	this.arr_date = arr_date;
 	this.docket = docket;
 	this.incident = incident;
-	this.county = county;
-	this.offenses = offenses;
 }
 
 
@@ -59467,9 +59442,7 @@ function Conviction(_ref) {
 			inc_datefield: '',
 			arr_datefield: '',
 			docketfield: '',
-			countyfield: '',
 			incidentfield: '',
-			offensesfield: '',
 			working: false
 		};
 	},
@@ -59486,9 +59459,7 @@ function Conviction(_ref) {
 					inc_date: this.inc_datefield,
 					arr_date: this.arr_datefield,
 					docket: this.docketfield,
-					county: this.countyfield,
 					incident: this.incidentfield,
-					offenses: this.offensesfield,
 					app_id: this.app_id
 				}).then(function (_ref2) {
 					var data = _ref2.data;
@@ -59498,9 +59469,7 @@ function Conviction(_ref) {
 					_this.inc_datefield = '';
 					_this.arr_datefield = '';
 					_this.docketfield = '';
-					_this.countyfield = '';
 					_this.incidentfield = '';
-					_this.offensesfield = '';
 					_this.successmsg = '';
 
 					//display other forms
@@ -59562,14 +59531,8 @@ function Conviction(_ref) {
 			if (!this.docketfield) {
 				this.errors.push("Please provide a docket number.");
 			}
-			if (!this.countyfield) {
-				this.errors.push("Please provide a county.");
-			}
 			if (!this.incidentfield) {
 				this.errors.push("Please provide a description of your conviction.");
-			}
-			if (!this.offensesfield) {
-				this.errors.push("Please give a list of offenses associated with the incident.");
 			}
 		}
 	},
@@ -59872,32 +59835,6 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
-                _c("label", { attrs: { for: "countyfield" } }, [
-                  _vm._v("County:")
-                ]),
-                _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.countyfield,
-                      expression: "countyfield"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  staticStyle: { width: "45%" },
-                  domProps: { value: _vm.countyfield },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.countyfield = $event.target.value
-                    }
-                  }
-                }),
-                _vm._v(" "),
                 _vm._m(3),
                 _vm._v(" "),
                 _c("textarea", {
@@ -59921,42 +59858,7 @@ var render = function() {
                     }
                   }
                 }),
-                _vm._v(" "),
-                _c(
-                  "label",
-                  {
-                    staticStyle: { width: "55%" },
-                    attrs: { for: "offensesfield" }
-                  },
-                  [
-                    _vm._v(
-                      "Give a list of offenses associated with your incident."
-                    )
-                  ]
-                ),
-                _vm._v(" "),
-                _c("textarea", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.offensesfield,
-                      expression: "offensesfield"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  staticStyle: { width: "55%" },
-                  domProps: { value: _vm.offensesfield },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.offensesfield = $event.target.value
-                    }
-                  }
-                }),
-                _vm._v(" "),
+                _vm._v("\\   \n\t\t\t\t\t    "),
                 _c(
                   "button",
                   {
@@ -59982,31 +59884,17 @@ var render = function() {
               ]),
               _vm._v(" "),
               _c("p", { staticClass: "h5" }, [
-                _vm._v("What crimes were you convicted of?")
+                _vm._v("What offenses were associated with this incident?")
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "card text-white card-warning" }, [
                 _c("div", { staticClass: "card-body" }, [
                   _c("p", { staticClass: "card-title" }, [
-                    _vm._v("Add each crime and sentence one at a time below.")
+                    _vm._v("Add each offense related to the incident below.")
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "card-text" }, [
                     _c("div", { attrs: { id: "crimeapp", conid: _vm.con_id } })
-                  ])
-                ])
-              ]),
-              _vm._v(" "),
-              _vm._m(4),
-              _vm._v(" "),
-              _c("div", { staticClass: "card text-white card-warning" }, [
-                _c("div", { staticClass: "card-body" }, [
-                  _vm._m(5),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "card-text" }, [
-                    _c("div", {
-                      attrs: { id: "nocrimeapp", conid: _vm.con_id }
-                    })
                   ])
                 ])
               ])
@@ -60072,28 +59960,6 @@ var staticRenderFns = [
         )
       ]
     )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("p", { staticClass: "h5" }, [
-      _vm._v("What offenses were you not "),
-      _c("strong", [_vm._v("NOT")]),
-      _vm._v(" convicted of?")
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("p", { staticClass: "card-title" }, [
-      _vm._v("Add each offense you weren't convicted of below."),
-      _c("br"),
-      _vm._v(
-        "  Let us know what the judge did with this charge.  What was the result?"
-      )
-    ])
   }
 ]
 render._withStripped = true
@@ -60187,23 +60053,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 function Crime(_ref) {
 	var id = _ref.id,
-	    crime_date = _ref.crime_date,
-	    crime = _ref.crime,
-	    sentence = _ref.sentence;
+	    crime = _ref.crime;
 
 	this.id = id;
-	this.crime_date;
 	this.crime = crime;
-	this.sentence = sentence;
 }
 
 
@@ -60213,9 +60069,7 @@ function Crime(_ref) {
 		return {
 			crimes: [],
 			app_id: $("#appid").attr("appid"), //from appid in blade
-			crime_datefield: '',
 			crimefield: '',
-			sentencefield: '',
 			working: false
 		};
 	},
@@ -60225,9 +60079,7 @@ function Crime(_ref) {
 			var _this = this;
 
 			axios.post('/api/crimes/store', {
-				crime_date: this.crime_datefield,
-				crime: this.crimefield,
-				sentence: this.sentencefield
+				crime: this.crimefield
 			}).then(function (_ref2) {
 				var data = _ref2.data;
 
@@ -60334,8 +60186,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
 	computed: {
@@ -60357,11 +60207,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("tr", { staticClass: "table-dark" }, [
-    _c("td", [_vm._v(_vm._s(_vm.crime_date))]),
-    _vm._v(" "),
     _c("td", [_vm._v(_vm._s(_vm.crime))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.sentence))]),
     _vm._v(" "),
     _c("td", [
       _c("a", { staticClass: "btn btn-info", attrs: { href: _vm.idlink } }, [
@@ -60411,31 +60257,7 @@ var render = function() {
     ),
     _vm._v(" "),
     _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "crime_datefield" } }, [_vm._v("Date:")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.crime_datefield,
-            expression: "crime_datefield"
-          }
-        ],
-        staticClass: "form-control",
-        staticStyle: { width: "25%" },
-        domProps: { value: _vm.crime_datefield },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.crime_datefield = $event.target.value
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "crimefield" } }, [_vm._v("Crime:")]),
+      _c("label", { attrs: { for: "crimefield" } }, [_vm._v("Offense:")]),
       _vm._v(" "),
       _c("input", {
         directives: [
@@ -60455,30 +60277,6 @@ var render = function() {
               return
             }
             _vm.crimefield = $event.target.value
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "sentencefield" } }, [_vm._v("Sentence:")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.sentencefield,
-            expression: "sentencefield"
-          }
-        ],
-        staticClass: "form-control",
-        staticStyle: { width: "75%" },
-        domProps: { value: _vm.sentencefield },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.sentencefield = $event.target.value
           }
         }
       }),
@@ -60506,11 +60304,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", { staticClass: "table-info" }, [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Date")]),
-        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Crime")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Sentence")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v(" ")])
       ])
@@ -60535,461 +60329,7 @@ var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(116)
 /* template */
-var __vue_template__ = __webpack_require__(120)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/NoCrimeApp.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4fd90d4a", Component.options)
-  } else {
-    hotAPI.reload("data-v-4fd90d4a", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 116 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__NoCrimeComponent_vue__ = __webpack_require__(117);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__NoCrimeComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__NoCrimeComponent_vue__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-function NoCrime(_ref) {
-	var id = _ref.id,
-	    nocrimes_date = _ref.nocrimes_date,
-	    offense = _ref.offense,
-	    result = _ref.result;
-
-	this.id = id;
-	this.nocrimes_date = nocrimes_date;
-	this.offense = offense;
-	this.result = result;
-}
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-	data: function data() {
-		return {
-			nocrimes: [],
-			app_id: $("#appid").attr("appid"), //from appid in blade 			 
-			nocrimes_datefield: '',
-			offensefield: '',
-			resultfield: '',
-			working: false
-		};
-	},
-
-	methods: {
-		create: function create() {
-			var _this = this;
-
-			axios.post('/api/nocrimes/' + this.app_id, {
-				app_id: this.app_id,
-				nocrimes_date: this.nocrimes_datefield,
-				offense: this.offensefield,
-				result: this.resultfield
-			}).then(function (_ref2) {
-				var data = _ref2.data;
-
-				_this.nocrimes.push({ data: data });
-			});
-		},
-		read: function read() {
-			var _this2 = this;
-
-			axios.get('/api/nocrimes/' + this.app_id).then(function (_ref3) {
-				var data = _ref3.data;
-
-				data.forEach(function (nocrime) {
-					_this2.nocrimes.push(new NoCrime(nocrime));
-				});
-			});
-		},
-		update: function update() {
-			//TODO
-		},
-		edit: function edit() {
-			//TODO
-		},
-		del: function del() {
-			//TODO
-		}
-	},
-	components: {
-		nocrimeComponent: __WEBPACK_IMPORTED_MODULE_0__NoCrimeComponent_vue___default.a
-	},
-	created: function created() {
-		this.read();
-	}
-});
-
-/***/ }),
-/* 117 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(0)
-/* script */
-var __vue_script__ = __webpack_require__(118)
-/* template */
-var __vue_template__ = __webpack_require__(119)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/NoCrimeComponent.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-672f2692", Component.options)
-  } else {
-    hotAPI.reload("data-v-672f2692", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 118 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-	computed: {
-		idlink: function idlink() {
-			return '/nocrimes/' + this.id;
-		}
-	},
-	methods: {},
-	props: ['id', 'nocrimes_date', 'offense', 'result']
-
-});
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("tr", { staticClass: "table-dark" }, [
-    _c("td", [_vm._v(_vm._s(_vm.nocrimes_date))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.offense))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.result))]),
-    _vm._v(" "),
-    _c("td", [
-      _c("a", { staticClass: "btn btn-info", attrs: { href: _vm.idlink } }, [
-        _vm._v("Edit")
-      ])
-    ])
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-672f2692", module.exports)
-  }
-}
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { attrs: { id: "app" } }, [
-    _c(
-      "table",
-      { staticClass: "table table-hover", staticStyle: { width: "75%" } },
-      [
-        _vm._m(0),
-        _vm._v(" "),
-        _vm._l(_vm.nocrimes, function(nocrime) {
-          return _c(
-            "nocrime-component",
-            _vm._b(
-              { key: nocrime.id, on: { edit: _vm.edit } },
-              "nocrime-component",
-              nocrime,
-              false
-            )
-          )
-        })
-      ],
-      2
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "nocrimes_datefield" } }, [_vm._v("Date:")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.nocrimes_datefield,
-            expression: "nocrimes_datefield"
-          }
-        ],
-        staticClass: "form-control",
-        staticStyle: { width: "25%" },
-        domProps: { value: _vm.nocrimes_datefield },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.nocrimes_datefield = $event.target.value
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "offensefield" } }, [_vm._v("Offense:")]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.offensefield,
-            expression: "offensefield"
-          }
-        ],
-        staticClass: "form-control",
-        staticStyle: { width: "75%" },
-        domProps: { value: _vm.offensefield },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.offensefield = $event.target.value
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "resultfield" } }, [_vm._v("Result:")]),
-      _vm._v(" "),
-      _c(
-        "select",
-        {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.resultfield,
-              expression: "resultfield"
-            }
-          ],
-          staticClass: "form-control",
-          staticStyle: { width: "75%" },
-          on: {
-            change: function($event) {
-              var $$selectedVal = Array.prototype.filter
-                .call($event.target.options, function(o) {
-                  return o.selected
-                })
-                .map(function(o) {
-                  var val = "_value" in o ? o._value : o.value
-                  return val
-                })
-              _vm.resultfield = $event.target.multiple
-                ? $$selectedVal
-                : $$selectedVal[0]
-            }
-          }
-        },
-        _vm._l(
-          [
-            "expunged",
-            "non pros",
-            "withdrawn",
-            "dismissed",
-            "PWOV",
-            "ARD",
-            "not guilty",
-            "other"
-          ],
-          function(res) {
-            return _c(
-              "option",
-              {
-                key: res,
-                domProps: {
-                  value: res,
-                  selected: res === _vm.resultfield ? "selected" : ""
-                }
-              },
-              [_vm._v("\n\t\t    \t" + _vm._s(res) + "\n\t\t    \t")]
-            )
-          }
-        ),
-        0
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-info",
-          staticStyle: { "margin-top": "10px" },
-          on: {
-            click: function($event) {
-              _vm.create()
-            }
-          }
-        },
-        [_vm._v("Save")]
-      )
-    ])
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", { staticClass: "table-info" }, [
-        _c("th", { attrs: { scope: "res" } }, [_vm._v("Date")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "res" } }, [_vm._v("Offense")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "res" } }, [_vm._v("Result")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "res" } }, [_vm._v(" ")])
-      ])
-    ])
-  }
-]
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-4fd90d4a", module.exports)
-  }
-}
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(0)
-/* script */
-var __vue_script__ = __webpack_require__(122)
-/* template */
-var __vue_template__ = __webpack_require__(123)
+var __vue_template__ = __webpack_require__(117)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -61028,11 +60368,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 122 */
+/* 116 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -61159,7 +60505,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 123 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -61261,6 +60607,8 @@ var render = function() {
         _vm._v(" "),
         _vm._m(2),
         _vm._v(" "),
+        _vm._m(3),
+        _vm._v(" "),
         _c("div", { staticClass: "row form-group" }, [
           _c(
             "div",
@@ -61278,7 +60626,11 @@ var render = function() {
             ]
           ),
           _vm._v(" "),
-          _vm._m(3)
+          _c(
+            "div",
+            { staticClass: "col-md-6", staticStyle: { float: "right" } },
+            [_vm._v('="btn btn-info">NEXT - LEVEL 9')]
+          )
         ])
       ]
     )
@@ -61292,57 +60644,18 @@ var staticRenderFns = [
     return _c("div", { staticClass: "card text-white bg-secondary mb-3" }, [
       _c("div", { staticClass: "card-body" }, [
         _c("h4", { staticClass: "card-title text-warning" }, [
-          _vm._v("LEVEL 8: CONVICTIONS YOU DON'T WANT A PARDON FOR")
+          _vm._v("LEVEL 8: ADDITIONAL CHARGES OR INCIDENTS")
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "card-text" }, [
           _c("p", [
             _vm._v(
-              "\n                            There’s no limit on the number of convictions you can ask for a pardon for at one time. The Board of Pardons is going to look at your entire record – all the crimes in Pennsylvania that you’ve been charged with and been found guilty of.\n                        "
-            )
-          ]),
-          _vm._v(" "),
-          _c("p", [
-            _vm._v(
-              "\n                            They won’t think you are greedy if you ask for pardons for all of them.  If you want to add another, click "
-            ),
-            _c(
-              "a",
-              { staticClass: "text-info", attrs: { href: "/level7/edit" } },
-              [_vm._v("HERE.")]
-            ),
-            _vm._v(
-              "  But if you don't have a reason you don't want to ask for a pardon for one or more crimes you've been convictged of, this is the section when you talk about those other crimes.\n                        "
+              "\n                            Text regarding additional charges or incidents.\n                        "
             )
           ])
         ])
       ])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "card text-white bg-secondary mb-3",
-        staticStyle: { "max-width": "40rem" }
-      },
-      [
-        _c("div", { staticClass: "card-body" }, [
-          _c("h5", { staticClass: "card-title text-warning" }, [
-            _vm._v("CONVICTIONS YOU'RE "),
-            _c("span", { staticClass: "text-info" }, [_vm._v("NOT")]),
-            _vm._v(" ASKING A PARDON FOR")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card-text" }, [
-            _c("div", { attrs: { id: "nopardonsapp" } })
-          ])
-        ])
-      ]
-    )
   },
   function() {
     var _vm = this
@@ -61379,10 +60692,54 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c(
       "div",
-      { staticClass: "col-md-6", staticStyle: { float: "right" } },
+      {
+        staticClass: "card text-white bg-secondary mb-3",
+        staticStyle: { "max-width": "40rem" }
+      },
       [
-        _c("a", { staticClass: "btn btn-info", attrs: { href: "level9" } }, [
-          _vm._v("NEXT - LEVEL 9")
+        _c("div", { staticClass: "card-body" }, [
+          _c("h5", { staticClass: "card-title text-warning" }, [
+            _vm._v("ADULT CHARGES")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-text" }, [
+            _c("p", [
+              _vm._v(
+                "Next, we are going to ask you about offenses you were charged with when you were an adult."
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { attrs: { id: "adultcrimesapp" } })
+          ])
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "card text-white bg-secondary mb-3",
+        staticStyle: { "max-width": "40rem" }
+      },
+      [
+        _c("div", { staticClass: "card-body" }, [
+          _c("h5", { staticClass: "card-title text-warning" }, [
+            _vm._v("TRAFFIC CITATIONS")
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-text" }, [
+            _c("p", [
+              _vm._v(
+                "Now, the last area: TRAFFIC CITATIONS. We are NOT asking about parking tickets.  The Board of Pardons will be getting a copy of your Pennsylvania Driving Record.  You need to get your record to answer the questions in this section."
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { attrs: { id: "citationsapp" } })
+          ])
         ])
       ]
     )
@@ -61398,496 +60755,15 @@ if (false) {
 }
 
 /***/ }),
-/* 124 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
-var __vue_script__ = __webpack_require__(125)
+var __vue_script__ = __webpack_require__(119)
 /* template */
-var __vue_template__ = __webpack_require__(129)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/NoPardonApp.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-77abe63a", Component.options)
-  } else {
-    hotAPI.reload("data-v-77abe63a", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 125 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__NoPardonComponent_vue__ = __webpack_require__(126);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__NoPardonComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__NoPardonComponent_vue__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-function NoPardon(_ref) {
-	var id = _ref.id,
-	    nopardons_date = _ref.nopardons_date,
-	    level = _ref.level,
-	    offense = _ref.offense,
-	    sentence = _ref.sentence;
-
-	this.id = id;
-	this.nopardons_date = nopardons_date;
-	this.level = level;
-	this.offense = offense;
-	this.sentence = sentence;
-}
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-	data: function data() {
-		return {
-			nopardons: [],
-			app_id: $("#appid").attr("appid"),
-			errors: [],
-			nopardons_datefield: '',
-			levelfield: '',
-			offensefield: '',
-			sentencefield: '',
-			working: false
-		};
-	},
-
-	methods: {
-		formSubmit: function formSubmit(event) {
-			var _this = this;
-
-			axios.post('/api/nopardons/store', {
-				app_id: this.app_id,
-				nopardons_datefield: this.nopardons_datefield,
-				level: this.levelfield,
-				offense: this.offensefield,
-				sentence: this.sentencefield
-			}).then(function (_ref2) {
-				var data = _ref2.data;
-
-				_this.nopardons.push(new NoPardon(data));
-				_this.nopardons_datefield = '';
-				_this.level = '';
-				_this.offense = '';
-				_this.sentence = '';
-				event.target.reset();
-			});
-		},
-		read: function read() {
-			var _this2 = this;
-
-			axios.get('/api/nopardons/' + this.app_id).then(function (_ref3) {
-				var data = _ref3.data;
-
-				data.forEach(function (nopardon) {
-					_this2.nopardons.push(new NoPardon(nopardon));
-				});
-			});
-		},
-		update: function update() {
-			//TODO
-		},
-		edit: function edit() {
-			//TODO
-		},
-		del: function del() {
-			//TODO
-		},
-
-		checkForm: function checkForm(e) {
-			if (!this.nopardons_datefield) {
-				this.errors.push('Date is required.');
-			}
-			if (!Object(__WEBPACK_IMPORTED_MODULE_0__app_js__["checkdate"])(this.nopardons_datefield)) {
-				this.errors.push('Please use MM/DD/YYYY for your dates.');
-			}
-		}
-	},
-	components: {
-		nopardonComponent: __WEBPACK_IMPORTED_MODULE_1__NoPardonComponent_vue___default.a
-	},
-	created: function created() {
-		this.read();
-	}
-});
-
-/***/ }),
-/* 126 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(0)
-/* script */
-var __vue_script__ = __webpack_require__(127)
-/* template */
-var __vue_template__ = __webpack_require__(128)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/js/components/NoPardonComponent.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1e543a3f", Component.options)
-  } else {
-    hotAPI.reload("data-v-1e543a3f", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 127 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-	computed: {
-		idlink: function idlink() {
-			return '/nopardons/' + this.id;
-		}
-	},
-	methods: {},
-	props: ['id', 'nopardons_date', 'offense', 'sentence']
-
-});
-
-/***/ }),
-/* 128 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("tr", { staticClass: "table-dark" }, [
-    _c("td", [_vm._v(_vm._s(_vm.nopardons_date))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.level))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.offense))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.sentence))]),
-    _vm._v(" "),
-    _c("td", [
-      _c("a", { staticClass: "btn btn-info", attrs: { href: _vm.idlink } }, [
-        _vm._v("Edit")
-      ])
-    ])
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-1e543a3f", module.exports)
-  }
-}
-
-/***/ }),
-/* 129 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { attrs: { id: "app" } }, [
-    _c(
-      "table",
-      { staticClass: "table table-hover", staticStyle: { width: "75%" } },
-      [
-        _vm._m(0),
-        _vm._v(" "),
-        _vm._l(_vm.nopardons, function(nopardon) {
-          return _c(
-            "nopardon-component",
-            _vm._b(
-              { key: nopardon.id, on: { edit: _vm.edit } },
-              "nopardon-component",
-              nopardon,
-              false
-            )
-          )
-        })
-      ],
-      2
-    ),
-    _vm._v(" "),
-    _c(
-      "form",
-      {
-        attrs: { id: "Nopardonsform" },
-        on: {
-          submit: function($event) {
-            $event.preventDefault()
-            return _vm.formSubmit($event)
-          }
-        }
-      },
-      [
-        _c("div", { staticClass: "form-group" }, [
-          _c("label", { attrs: { for: "nopardons_datefield" } }, [
-            _vm._v("Date:")
-          ]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.nopardons_datefield,
-                expression: "nopardons_datefield"
-              }
-            ],
-            staticClass: "form-control",
-            staticStyle: { width: "35%" },
-            domProps: { value: _vm.nopardons_datefield },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.nopardons_datefield = $event.target.value
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "levelfield" } }, [
-            _vm._v("State or Federal?:")
-          ]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.levelfield,
-                expression: "levelfield"
-              }
-            ],
-            staticClass: "form-control",
-            staticStyle: { width: "75%" },
-            domProps: { value: _vm.levelfield },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.levelfield = $event.target.value
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "offensefield" } }, [_vm._v("Offense:")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.offensefield,
-                expression: "offensefield"
-              }
-            ],
-            staticClass: "form-control",
-            staticStyle: { width: "75%" },
-            domProps: { value: _vm.offensefield },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.offensefield = $event.target.value
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "sentencefield" } }, [
-            _vm._v("Sentence:")
-          ]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.sentencefield,
-                expression: "sentencefield"
-              }
-            ],
-            staticClass: "form-control",
-            staticStyle: { width: "75%" },
-            domProps: { value: _vm.sentencefield },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.sentencefield = $event.target.value
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-info",
-              staticStyle: { "margin-top": "10px" }
-            },
-            [_vm._v("Save")]
-          )
-        ])
-      ]
-    )
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", { staticClass: "table-info" }, [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Date")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("State/Federal")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Offense")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Sentence")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v(" ")])
-      ])
-    ])
-  }
-]
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-77abe63a", module.exports)
-  }
-}
-
-/***/ }),
-/* 130 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(0)
-/* script */
-var __vue_script__ = __webpack_require__(131)
-/* template */
-var __vue_template__ = __webpack_require__(135)
+var __vue_template__ = __webpack_require__(123)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -61926,13 +60802,22 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 131 */
+/* 119 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__YouthCrimeComponent_vue__ = __webpack_require__(132);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__YouthCrimeComponent_vue__ = __webpack_require__(120);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__YouthCrimeComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__YouthCrimeComponent_vue__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -61976,17 +60861,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 function YouthCrime(_ref) {
 	var id = _ref.id,
 	    youth_date = _ref.youth_date,
-	    location = _ref.location,
+	    county = _ref.county,
+	    state = _ref.state,
 	    offense = _ref.offense,
 	    adjudicated = _ref.adjudicated,
-	    disposition = _ref.disposition;
+	    sentence = _ref.sentence;
 
 	this.id = id;
-	this.youthcrime = youthcrime;
-	this.location = location;
+	this.youth_date = youth_date;
+	this.county = county;
+	this.state = state;
 	this.offense = offense;
 	this.adjudicated = adjudicated;
-	this.disposition = disposition;
+	this.sentence = sentence;
 }
 
 
@@ -61997,10 +60884,11 @@ function YouthCrime(_ref) {
 			youthcrimes: [],
 			app_id: $("#appid").attr("appid"), //from appid in blade 					
 			youth_datefield: '',
-			locationfield: '',
+			countyfield: '',
+			statefield: '',
 			offensefield: '',
 			adjudicatedfield: '',
-			dispositionfield: '',
+			sentencefield: '',
 			working: false
 		};
 	},
@@ -62012,14 +60900,26 @@ function YouthCrime(_ref) {
 			axios.post('/api/youthcrimes/store', {
 				app_id: this.app_id,
 				youth_date: this.youth_datefield,
-				location: this.locationfield,
+				county: this.countyfield,
+				state: this.statefield,
 				offense: this.offensefield,
 				adjudicated: this.adjudicatedfield,
-				disposition: this.dispositionfield
+				sentence: this.sentencefield
 			}).then(function (_ref2) {
 				var data = _ref2.data;
 
 				_this.youthcrimes.push({ data: data });
+			}).catch(function (error) {
+				if (error.response) {
+					console.log(error.response.data);
+					console.log(error.response.status);
+					console.log(error.response.headers);
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('Error', error.message);
+				}
+				console.log(error.config);;
 			});
 		},
 		read: function read() {
@@ -62052,15 +60952,15 @@ function YouthCrime(_ref) {
 });
 
 /***/ }),
-/* 132 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
-var __vue_script__ = __webpack_require__(133)
+var __vue_script__ = __webpack_require__(121)
 /* template */
-var __vue_template__ = __webpack_require__(134)
+var __vue_template__ = __webpack_require__(122)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -62099,7 +60999,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 133 */
+/* 121 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -62121,12 +61021,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 		}
 	},
 	methods: {},
-	props: ['id', 'youth_date', 'location', 'offense']
+	props: ['id', 'youth_date', 'county', 'offense']
 
 });
 
 /***/ }),
-/* 134 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -62136,7 +61036,7 @@ var render = function() {
   return _c("tr", { staticClass: "table-dark" }, [
     _c("td", [_vm._v(_vm._s(_vm.youth_date))]),
     _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.location))]),
+    _c("td", [_vm._v(_vm._s(_vm.county))]),
     _vm._v(" "),
     _c("td", [_vm._v(_vm._s(_vm.offense))]),
     _vm._v(" "),
@@ -62158,7 +61058,7 @@ if (false) {
 }
 
 /***/ }),
-/* 135 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -62188,7 +61088,9 @@ var render = function() {
     ),
     _vm._v(" "),
     _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "youth_datefield" } }, [_vm._v("Date:")]),
+      _c("label", { attrs: { for: "youth_datefield" } }, [
+        _vm._v("Date of Incident:")
+      ]),
       _vm._v(" "),
       _c("input", {
         directives: [
@@ -62212,26 +61114,50 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _c("label", { attrs: { for: "locationfield" } }, [_vm._v("Location:")]),
+      _c("label", { attrs: { for: "countyfield" } }, [_vm._v("County:")]),
       _vm._v(" "),
       _c("input", {
         directives: [
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.locationfield,
-            expression: "locationfield"
+            value: _vm.countyfield,
+            expression: "countyfield"
           }
         ],
         staticClass: "form-control",
         staticStyle: { width: "75%" },
-        domProps: { value: _vm.locationfield },
+        domProps: { value: _vm.countyfield },
         on: {
           input: function($event) {
             if ($event.target.composing) {
               return
             }
-            _vm.locationfield = $event.target.value
+            _vm.countyfield = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "statefield" } }, [_vm._v("State:")]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.statefield,
+            expression: "statefield"
+          }
+        ],
+        staticClass: "form-control",
+        staticStyle: { width: "75%" },
+        domProps: { value: _vm.statefield },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.statefield = $event.target.value
           }
         }
       }),
@@ -62260,54 +61186,82 @@ var render = function() {
         }
       }),
       _vm._v(" "),
+      _c("p", { staticStyle: { width: "75%" } }, [_vm._v("Adjudicated:")]),
+      _vm._v(" "),
       _c("label", { attrs: { for: "adjudicatedfield" } }, [
-        _vm._v("Adjudicated:")
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.adjudicatedfield,
+              expression: "adjudicatedfield"
+            }
+          ],
+          staticClass: "radio-inline",
+          staticStyle: { margin: "5px" },
+          attrs: { type: "radio", value: "Yes" },
+          domProps: {
+            checked: _vm.adjudicatedfield == "Yes",
+            checked: _vm._q(_vm.adjudicatedfield, "Yes")
+          },
+          on: {
+            change: function($event) {
+              _vm.adjudicatedfield = "Yes"
+            }
+          }
+        }),
+        _vm._v("Yes  \n            ")
       ]),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "adjudicatedfield" } }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.adjudicatedfield,
+              expression: "adjudicatedfield"
+            }
+          ],
+          staticClass: "radio-inline",
+          staticStyle: { margin: "5px" },
+          attrs: { type: "radio", value: "No" },
+          domProps: {
+            checked: _vm.adjudicatedfield == "No",
+            checked: _vm._q(_vm.adjudicatedfield, "No")
+          },
+          on: {
+            change: function($event) {
+              _vm.adjudicatedfield = "No"
+            }
+          }
+        }),
+        _vm._v("No \n            ")
+      ]),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "sentencefield" } }, [_vm._v("Sentence:")]),
       _vm._v(" "),
       _c("input", {
         directives: [
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.adjudicatedfield,
-            expression: "adjudicatedfield"
+            value: _vm.sentencefield,
+            expression: "sentencefield"
           }
         ],
         staticClass: "form-control",
         staticStyle: { width: "75%" },
-        domProps: { value: _vm.adjudicatedfield },
+        domProps: { value: _vm.sentencefield },
         on: {
           input: function($event) {
             if ($event.target.composing) {
               return
             }
-            _vm.adjudicatedfield = $event.target.value
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("label", { attrs: { for: "dispositionfield" } }, [
-        _vm._v("Disposition:")
-      ]),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.dispositionfield,
-            expression: "dispositionfield"
-          }
-        ],
-        staticClass: "form-control",
-        staticStyle: { width: "75%" },
-        domProps: { value: _vm.dispositionfield },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.dispositionfield = $event.target.value
+            _vm.sentencefield = $event.target.value
           }
         }
       }),
@@ -62337,13 +61291,15 @@ var staticRenderFns = [
       _c("tr", { staticClass: "table-info" }, [
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Date")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Location")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("County")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("State")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Offense")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Adjudicated")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Disposition")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Sentence")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v(" ")])
       ])
@@ -62360,15 +61316,15 @@ if (false) {
 }
 
 /***/ }),
-/* 136 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
-var __vue_script__ = __webpack_require__(137)
+var __vue_script__ = __webpack_require__(125)
 /* template */
-var __vue_template__ = __webpack_require__(141)
+var __vue_template__ = __webpack_require__(129)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -62385,7 +61341,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/js/components/NoCitationApp.vue"
+Component.options.__file = "resources/js/components/AdultCrimeApp.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -62394,9 +61350,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-580db85e", Component.options)
+    hotAPI.createRecord("data-v-3ee26264", Component.options)
   } else {
-    hotAPI.reload("data-v-580db85e", Component.options)
+    hotAPI.reload("data-v-3ee26264", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -62407,13 +61363,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 137 */
+/* 125 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__NoCitationComponent_vue__ = __webpack_require__(138);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__NoCitationComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__NoCitationComponent_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__AdultCrimeComponent_vue__ = __webpack_require__(126);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__AdultCrimeComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__AdultCrimeComponent_vue__);
+//
+//
+//
+//
 //
 //
 //
@@ -62450,18 +61410,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
-function nocitation(_ref) {
+function AdultCrime(_ref) {
 	var id = _ref.id,
-	    nocitations_date = _ref.nocitations_date,
-	    location = _ref.location,
+	    adult_date = _ref.adult_date,
+	    charges = _ref.charges,
+	    state = _ref.state,
 	    offense = _ref.offense,
-	    disposition = _ref.disposition;
+	    sentence = _ref.sentence;
 
 	this.id = id;
-	this.nocitations_date = nocitations_date;
-	this.location = location;
+	this.adult_date = youth_date;
+	this.charges = charges;
+	this.state = state;
 	this.offense = offense;
-	this.disposition = disposition;
+	this.sentence = sentence;
 }
 
 
@@ -62469,12 +61431,13 @@ function nocitation(_ref) {
 /* harmony default export */ __webpack_exports__["default"] = ({
 	data: function data() {
 		return {
-			nocitations: [],
-			app_id: $("#appid").attr("appid"), //from appid in blade template
-			nocitations_datefield: '',
-			locationfield: '',
+			adultcrimes: [],
+			app_id: $("#appid").attr("appid"), //from appid in blade	
+			adult_datefield: '',
+			chargesfield: '',
+			statefield: '',
 			offensefield: '',
-			dispositionfield: '',
+			sentencefield: '',
 			working: false
 		};
 	},
@@ -62483,26 +61446,38 @@ function nocitation(_ref) {
 		create: function create() {
 			var _this = this;
 
-			axios.post('/api/nocitations/store', {
+			axios.post('/api/adultcrimes/store', {
 				app_id: this.app_id,
-				nocitations_date: this.nocitations_datefield,
-				location: this.locationfield,
+				adult_date: this.adult_datefield,
+				charges: this.chargesfield,
+				state: this.statefield,
 				offense: this.offensefield,
-				disposition: this.dispositionfield
+				sentence: this.sentencefield
 			}).then(function (_ref2) {
 				var data = _ref2.data;
 
-				_this.nocitations.push({ data: data });
+				_this.adultcrimes.push({ data: data });
+			}).catch(function (error) {
+				if (error.response) {
+					console.log(error.response.data);
+					console.log(error.response.status);
+					console.log(error.response.headers);
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('Error', error.message);
+				}
+				console.log(error.config);;
 			});
 		},
 		read: function read() {
 			var _this2 = this;
 
-			axios.get('/api/nocitations/' + this.app_id).then(function (_ref3) {
+			axios.get('/api/adultcrimes/' + this.app_id).then(function (_ref3) {
 				var data = _ref3.data;
 
-				data.forEach(function (nocitation) {
-					_this2.nocitations.push(new nocitation(nocitation));
+				data.forEach(function (adultcrime) {
+					_this2.adultcrimes.push(new AdultCrime(adultcrime));
 				});
 			});
 		},
@@ -62517,7 +61492,7 @@ function nocitation(_ref) {
 		}
 	},
 	components: {
-		nocitationComponent: __WEBPACK_IMPORTED_MODULE_0__NoCitationComponent_vue___default.a
+		adultcrimeComponent: __WEBPACK_IMPORTED_MODULE_0__AdultCrimeComponent_vue___default.a
 	},
 	created: function created() {
 		this.read();
@@ -62525,15 +61500,15 @@ function nocitation(_ref) {
 });
 
 /***/ }),
-/* 138 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
-var __vue_script__ = __webpack_require__(139)
+var __vue_script__ = __webpack_require__(127)
 /* template */
-var __vue_template__ = __webpack_require__(140)
+var __vue_template__ = __webpack_require__(128)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -62550,7 +61525,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/js/components/NoCitationComponent.vue"
+Component.options.__file = "resources/js/components/AdultCrimeComponent.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -62559,9 +61534,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-302a1d7a", Component.options)
+    hotAPI.createRecord("data-v-fc86c02c", Component.options)
   } else {
-    hotAPI.reload("data-v-302a1d7a", Component.options)
+    hotAPI.reload("data-v-fc86c02c", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -62572,7 +61547,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 139 */
+/* 127 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -62586,21 +61561,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
 	computed: {
 		idlink: function idlink() {
-			return '/nocitations/' + this.id;
+			return '/adultcrimes/' + this.id;
 		}
 	},
 	methods: {},
-	props: ['id', 'nocitation_date', 'location', 'offense', 'disposition']
+	props: ['id', 'adult_date', 'state', 'offense']
 
 });
 
 /***/ }),
-/* 140 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -62608,13 +61582,11 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("tr", { staticClass: "table-dark" }, [
-    _c("td", [_vm._v(_vm._s(_vm.nocitation_date))]),
+    _c("td", [_vm._v(_vm._s(_vm.adult_date))]),
     _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.location))]),
+    _c("td", [_vm._v(_vm._s(_vm.state))]),
     _vm._v(" "),
     _c("td", [_vm._v(_vm._s(_vm.offense))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.disposition))]),
     _vm._v(" "),
     _c("td", [
       _c("a", { staticClass: "btn btn-info", attrs: { href: _vm.idlink } }, [
@@ -62629,12 +61601,12 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-302a1d7a", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-fc86c02c", module.exports)
   }
 }
 
 /***/ }),
-/* 141 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -62648,13 +61620,13 @@ var render = function() {
       [
         _vm._m(0),
         _vm._v(" "),
-        _vm._l(_vm.nocitations, function(nocitation) {
+        _vm._l(_vm.adultcrimes, function(adultcrime) {
           return _c(
-            "nocitation-component",
+            "adultcrime-component",
             _vm._b(
-              { key: nocitation.id, on: { edit: _vm.edit } },
-              "nocitation-component",
-              nocitation,
+              { key: adultcrime.id, on: { edit: _vm.edit } },
+              "adultcrime-component",
+              adultcrime,
               false
             )
           )
@@ -62664,8 +61636,8 @@ var render = function() {
     ),
     _vm._v(" "),
     _c("div", { staticClass: "form-group" }, [
-      _c("label", { attrs: { for: "nocitations_datefield" } }, [
-        _vm._v("What date did you receive the ticke?")
+      _c("label", { attrs: { for: "adult_datefield" } }, [
+        _vm._v("Date of Incident:")
       ]),
       _vm._v(" "),
       _c("input", {
@@ -62673,25 +61645,25 @@ var render = function() {
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.nocitations_datefield,
-            expression: "nocitations_datefield"
+            value: _vm.adult_datefield,
+            expression: "adult_datefield"
           }
         ],
         staticClass: "form-control",
         staticStyle: { width: "35%" },
-        domProps: { value: _vm.nocitations_datefield },
+        domProps: { value: _vm.adult_datefield },
         on: {
           input: function($event) {
             if ($event.target.composing) {
               return
             }
-            _vm.nocitations_datefield = $event.target.value
+            _vm.adult_datefield = $event.target.value
           }
         }
       }),
       _vm._v(" "),
-      _c("label", { attrs: { for: "locationfield" } }, [
-        _vm._v("What county and state did you get the ticket in?")
+      _c("label", { attrs: { for: "chargesfield" } }, [
+        _vm._v("Federal or State Charges:")
       ]),
       _vm._v(" "),
       _c("input", {
@@ -62699,26 +61671,48 @@ var render = function() {
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.locationfield,
-            expression: "locationfield"
+            value: _vm.chargesfield,
+            expression: "chargesfield"
           }
         ],
         staticClass: "form-control",
-        staticStyle: { width: "35%" },
-        domProps: { value: _vm.locationfield },
+        staticStyle: { width: "75%" },
+        domProps: { value: _vm.chargesfield },
         on: {
           input: function($event) {
             if ($event.target.composing) {
               return
             }
-            _vm.locationfield = $event.target.value
+            _vm.chargesfield = $event.target.value
           }
         }
       }),
       _vm._v(" "),
-      _c("label", { attrs: { for: "offensefield" } }, [
-        _vm._v("What did you get the ticket for?")
-      ]),
+      _c("label", { attrs: { for: "statefield" } }, [_vm._v("State:")]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.statefield,
+            expression: "statefield"
+          }
+        ],
+        staticClass: "form-control",
+        staticStyle: { width: "75%" },
+        domProps: { value: _vm.statefield },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.statefield = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "offensefield" } }, [_vm._v("Offense:")]),
       _vm._v(" "),
       _c("input", {
         directives: [
@@ -62730,7 +61724,7 @@ var render = function() {
           }
         ],
         staticClass: "form-control",
-        staticStyle: { width: "35%" },
+        staticStyle: { width: "75%" },
         domProps: { value: _vm.offensefield },
         on: {
           input: function($event) {
@@ -62742,28 +61736,26 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _c("label", { attrs: { for: "dispositionfield" } }, [
-        _vm._v("What penalty did you get? (points, fine, suspended license?)")
-      ]),
+      _c("label", { attrs: { for: "sentencefield" } }, [_vm._v("Sentence:")]),
       _vm._v(" "),
       _c("input", {
         directives: [
           {
             name: "model",
             rawName: "v-model",
-            value: _vm.dispositionfield,
-            expression: "dispositionfield"
+            value: _vm.sentencefield,
+            expression: "sentencefield"
           }
         ],
         staticClass: "form-control",
-        staticStyle: { width: "35%" },
-        domProps: { value: _vm.dispositionfield },
+        staticStyle: { width: "75%" },
+        domProps: { value: _vm.sentencefield },
         on: {
           input: function($event) {
             if ($event.target.composing) {
               return
             }
-            _vm.dispositionfield = $event.target.value
+            _vm.sentencefield = $event.target.value
           }
         }
       }),
@@ -62791,13 +61783,17 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", { staticClass: "table-info" }, [
-        _c("th", { attrs: { scope: "res" } }, [_vm._v("Date")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Date")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "res" } }, [_vm._v("State/County")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("County")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "res" } }, [_vm._v("Offense")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("State")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "res" } }, [_vm._v("Penalty")])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Offense")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Sentence")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v(" ")])
       ])
     ])
   }
@@ -62807,20 +61803,20 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-580db85e", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-3ee26264", module.exports)
   }
 }
 
 /***/ }),
-/* 142 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
-var __vue_script__ = __webpack_require__(143)
+var __vue_script__ = __webpack_require__(131)
 /* template */
-var __vue_template__ = __webpack_require__(147)
+var __vue_template__ = __webpack_require__(135)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -62859,12 +61855,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 143 */
+/* 131 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__citationComponent_vue__ = __webpack_require__(144);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__citationComponent_vue__ = __webpack_require__(132);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__citationComponent_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__citationComponent_vue__);
 //
 //
@@ -62988,15 +61984,15 @@ function citation(_ref) {
 });
 
 /***/ }),
-/* 144 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
-var __vue_script__ = __webpack_require__(145)
+var __vue_script__ = __webpack_require__(133)
 /* template */
-var __vue_template__ = __webpack_require__(146)
+var __vue_template__ = __webpack_require__(134)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -63035,7 +62031,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 145 */
+/* 133 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -63063,7 +62059,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 146 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -63097,7 +62093,7 @@ if (false) {
 }
 
 /***/ }),
-/* 147 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -63275,7 +62271,7 @@ if (false) {
 }
 
 /***/ }),
-/* 148 */
+/* 136 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

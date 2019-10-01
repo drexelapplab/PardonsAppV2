@@ -1,7 +1,7 @@
 <template>
 	<tr class="table-dark">
-		<td>{{youth_date}}</td>
-		<td>{{county}}</td>
+		<td>{{adult_date}}</td>
+		<td>{{state}}</td>
 		<td>{{offense}}</td>
 		<td><a :href="idlink" class="btn btn-info">Edit</a></td>
 	</tr>
@@ -11,15 +11,14 @@
 	export default {
 		computed: {
 			idlink() {
-				return `/youthcrimes/${this.id}`;
+				return `/adultcrimes/${this.id}`;
 			}
 		},
 		methods: {
 
 		},
-		props: ['id', 'youth_date', 'county', 'offense'],
+		props: ['id', 'adult_date', 'state', 'offense'],
 
 
 	}
 </script>
-
