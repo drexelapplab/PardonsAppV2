@@ -6,14 +6,13 @@ use App\Job;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Faker\Generator;
+use App\Application;
 
 class JobsController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $id)
     {
-    	$appid = explode("/", $request->path());
-
-        $jobs = Job::where('app_id', $appid[2])->get();
+        $jobs = Job::where('app_id', $id)->get();
 
         return response($jobs->jsonSerialize(), Response::HTTP_OK);
     }
@@ -30,24 +29,43 @@ class JobsController extends Controller
         $jobObj->evaluation = $request['evaluation'];
     	$jobObj->save();
 
-  //  	\Session::flash('flash_message', 'Record added!'):  	
+        //SET APPLICATION SCHOOL STATUS
+        $application = Application::find($request['app_id']);
+        if($request['vol_status'] == 'Yes')
+        {
+            $application->vol_status = 'Yes';
+        }
+        $application->save(); 	
 
     	return response($jobObj->jsonSerialize(), Response::HTTP_CREATED);
     }
 
-    public function show(Request $request)
+    public function show(Request $request, $id)
     {
-        $job = Job::where('id', $request->job_id)->get();
+        $job = Job::find($id)->get();
+
         return response($job->jsonSerialize(), Response::HTTP_OK);
     }
 
-    public function update()
+    public function update(Request $request, $id)
     {
-    	//TODO
+        $jobObj = Job::find($id);
+ 
+        $jobObj->company = $request->input('company');
+        $jobObj->position = $request->input('position');
+        $jobObj->time = $request->input('time');
+        $jobObj->promotions = $request->input('promotions');
+        $jobObj->promo_descr = $request->input('promo_descr');
+        $jobObj->evaluation = $request->input('evaluation');
+        $jobObj->save();
+        return response('job updated', Response::HTTP_CREATED);
+
     }
 
-    public function delete()
+    public function destroy(Request $request, $id)
     {
-    	//TODO
+    	$jobObj = Job::find($id)->delete();
+
+         return response('job deleted', Response::HTTP_OK);
     }
 }

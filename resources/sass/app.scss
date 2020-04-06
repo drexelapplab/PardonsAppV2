@@ -12,6 +12,9 @@
 @import url("https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/darkly/bootstrap.min.css");
 @import url("https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 
+a, a:link {
+	color:white;
+}
 #mynav {
 	bottom:20px;
 }
@@ -22,3 +25,52 @@
 .form-check-label {
 	padding-bottom:5px;
 }
+
+.custom-success {
+	position:fixed;
+	top:10%;
+	width:35%;
+	z-index:1100;
+	left:15%;
+	right:25%;
+}
+
+.custom-alert {
+	position:fixed;
+	top:1%;
+	width:35%;
+	z-index:1000;
+}
+
+.nar-tabs {
+	padding-top: 10px;
+
+}
+
+.nar-details strong{
+	color:#3498DB;
+}
+
+.nar-details hr{
+	background-color:#3498DB;
+}
+
+.level-bar {
+	color: #ffffff;
+	font-size: 14px;
+	font-weight: bold;
+	text-align:center;
+	width:5%;
+	margin:1px;
+	font-size: 14pt;
+}
+.level-bar a{
+	color:#ffffff;
+	font-size: 14pt;
+
+}
+
+.level-active {
+	border-bottom: 4px solid #ffffff;
+}
+

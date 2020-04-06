@@ -1,3 +1,4 @@
+
 @extends('layouts.index')
 
     @section('head')

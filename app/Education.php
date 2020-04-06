@@ -13,4 +13,10 @@ class Education extends Model
     //private function getEducationDateValue() {
     //	return Carbon::createFromFormat('m/d/Y',$this->attributes['education_date']);
     //}
+
+    public function application() 
+    {
+
+        return $this->belongsTo('App\Application');
+    }
 }

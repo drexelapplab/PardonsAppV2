@@ -1,7 +1,7 @@
 <template>    
     <div class="container">
         <!-- ERROR Message Container -->
-        <div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+        <div id="errormsg" v-if="errors.length" class="alert alert-danger custom-alert">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>
             <strong>Please correct the following errors:</strong>
             <ul>
@@ -9,8 +9,8 @@
             </ul>
         </div>
         <!-- SUCCESS Message Container -->
-        <div id="success" v-if="successmsg === 'success'" style="position:fixed;top:10%;width:65%;z-index:1100;left:15%;right:25%;" class="alert alert-success">
-            <h4>Congrats on completing Level 3!</h4>
+        <div id="success" v-if="success === 'success'" class="alert alert-success custom-success">
+            <h4>{{ successmsg }}</h4>
                 <p>
                     <a id="nextbtn" :href="'/applications/level4/'+id" class="btn btn-info">Continue to Level 4
                     </a>
@@ -32,9 +32,9 @@
                         Do you want to do this section now, or skip ahead to the next section?
                     </p>
                     
-                    <a class="btn btn-info" :href="nexturl">
+<!--                     <a class="btn btn-info" :href="nexturl">
                         Go to LEVEL 4
-                    </a>
+                    </a> -->
                 </div>
             </div>
         </div>
@@ -46,10 +46,10 @@
                 <div class="card-text">
                     <div class="form-group">
                         <label for="vol_status">
-                            <input v-model="vol_status" onclick="showVolForm()" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="vol_status == 'Yes'"/>Yes&nbsp;&nbsp;
+                            <input v-model="vol_status" v-on:change="dataChange();" onclick="showVolForm()" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="vol_status == 'Yes'"/>Yes&nbsp;&nbsp;
                         </label>
                         <label for="vol_status">
-                            <input v-model="vol_status" style="margin:5px;" onclick="hideVolForm()" type="radio" class="radio-inline" value="No" :checked="vol_status == 'No'"/>No
+                            <input v-model="vol_status" v-on:change="dataChange();" style="margin:5px;" onclick="hideVolForm()" type="radio" class="radio-inline" value="No" :checked="vol_status == 'No'"/>No
                         </label>
                     </div>
                     
@@ -64,7 +64,8 @@
               <a :href="'/applications/level2/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 2</a>
             </div>
             <div style="float:right;" class="col-md-6">
-              <button style="margin:20px;" class="btn btn-info">NEXT - LEVEL 4</button>
+              <button v-if="level<=savelevel || change=='y'" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 4</button>
+              <a v-else :href="'/applications/level4/'+id" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 4</a>
             </div>
         </div>
     </form>
@@ -77,11 +78,11 @@
     this.level = status;
   }
 
-  
   export default {
     data(){
         //add data fields connected to the v-model in the template
         return{ 
+            //routes: [],
             errors: [], //error array used for validating form data
             appdata: [],
             id: $("#appid").attr("appid"),
@@ -89,23 +90,24 @@
             backurl: '/applications/level2/'+$("#appid").attr("appid"),
             vol_status: '',
             level: '',
-            savelevel: '3',
-            successmsg: ''
+            savelevel: 3,
+            successmsg: '',
+            success: '',
+            change: ''
         }
     },
     methods: {
       mounted() {
         //get data for app_id form
-        window.axios.get(`/api/application/`+this.id).then(({ data }) => {
+        window.axios.get('/api/application/'+this.id).then(({ data }) => {
+                    this.id = data[0].id;
                     this.vol_status = data[0].vol_status;
+                    this.level = data[0].status;
                     });
 
       },
       //send level 3 data to the ApplicationController update app status to level 3
       formSubmit: function(event) {      
-
-        //log entire model
-        console.log(this.model);
 
         this.checkForm(); //validate form
 
@@ -116,7 +118,16 @@
         if(!this.errors.length){
             window.axios.put(`/api/applications/`+this.id, {id: this.id, vol_status: this.vol_status, level: this.level, savelevel: this.savelevel }).then(() => { 
                 //display success message
-                this.successmsg = 'success';
+                if(this.savelevel == this.level) {
+                    this.success = 'success';
+                    this.successmsg = 'Congrats on completing Level  3!';
+                }
+                else if(this.change == 'y') {
+                    
+                    this.success = 'success';
+                    this.successmsg = 'Level 3 has been updated successfully.';
+                } 
+                
             });
         }
 
@@ -128,7 +139,13 @@
             this.errors.push('Have you volunteered?');
         }     
         //e.preventDefault();
-      }
+      },
+    dataChange: function(){
+            if(this.level >= this.savelevel) {
+               this.change = 'y'; 
+            }
+           
+        }
     },
     components: {
       

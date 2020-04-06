@@ -1,7 +1,7 @@
 <template>    
   <div class="container">
         <!-- ERROR Message Container -->
-        <div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+        <div id="errormsg" v-if="errors.length" class="alert alert-danger custom-alert">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>
             <strong>Please correct the following errors:</strong>
             <ul>
@@ -9,8 +9,8 @@
             </ul>
         </div>
         <!-- SUCCESS Message Container -->
-        <div id="success" v-if="successmsg === 'success'" style="position:fixed;top:10%;width:65%;z-index:1100;left:15%;right:25%;" class="alert alert-success">
-            <h4>Congrats on completing Level 4!</h4>
+        <div id="success" v-if="success === 'success'" class="alert alert-success custom-success">
+            <h4>{{ successmsg }}</h4>
                 <p><a id="nextbtn" :href="'/applications/level5/'+id" class="btn btn-info">Continue to Level 5</a></p>
         </div>
         <form id="level4Form" @submit.prevent="formSubmit">
@@ -24,17 +24,17 @@
                         <hr style="background-color:#f39c12;" />
                         <div class="form-group">
                             <label for="not_repeat" style="width:75%;">Most people could say that that they made mistakes about who they were with and where they went and won’t do it again.  How will the board know you won’t do it again?</label>
-                            <textarea v-model="not_repeat" style="width:75%;" name="not_repeat" class="form-control">
+                            <textarea v-model="not_repeat" v-on:change="dataChange();" style="width:75%;" name="not_repeat" class="form-control">
                             </textarea>
                         </div>
                         <div class="form-group">
                             <label style="width:75%;" for="choice">After you finished serving your sentence, did you find yourself in the same kind of situation and make a different choice?  Tell us about that.</label>
-                            <textarea v-model="choice" style="width:75%;" name="choice" class="form-control">
+                            <textarea v-model="choice" v-on:change="dataChange();" style="width:75%;" name="choice" class="form-control">
                             </textarea>
                         </div>
                         <div class="form-group">
                             <label for="teach" style="width:75%;">Have you used what you learned to teach other people (including your children) about how to avoid doing what you did? Tell us about that.</label>
-                            <textarea v-model="teach" style="width:75%;" name="teach" class="form-control">
+                            <textarea v-model="teach" v-on:change="dataChange();" style="width:75%;" name="teach" class="form-control">
                             </textarea>
                         </div>
                     </div>
@@ -46,7 +46,8 @@
                   <a :href="'/applications/level3/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 3</a>
                 </div>
                 <div style="float:right;" class="col-md-6">
-                  <button style="margin:20px;" class="btn btn-info">NEXT - LEVEL 5</button>
+                    <button v-if="level<=savelevel || change == 'y'" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 5</button>
+              <a v-else :href="'/applications/level5/'+id" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 5</a>
                 </div>
             </div>
         </form>
@@ -67,7 +68,9 @@
             level: '',
             savelevel: 4,
             successmsg: '',
-            nexturl: ''
+            nexturl: '',
+            success: '',
+            change: ''
         }
     },
     methods: {
@@ -103,7 +106,16 @@
             })
             .then(() => { 
                 //display success message
-                this.successmsg = 'success';
+                if(this.savelevel == this.level) {
+                    this.success = 'success';
+                    this.successmsg = 'Congrats on completing Level  4!';
+                }
+                else if(this.change == 'y') {
+                    
+                    this.success = 'success';
+                    this.successmsg = 'Level 4 has been updated successfully.';
+                } 
+                
             })
             .catch((error) => {
                 if (error.response) {
@@ -133,7 +145,13 @@
             this.errors.push('A response about teaching others is required.');
         }             
         //e.preventDefault();
-      }
+      },
+    dataChange: function(){
+            if(this.level >= this.savelevel) {
+               this.change = 'y'; 
+            }
+           
+        }
     },
     components: {
       

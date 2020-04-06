@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
-class Nocrime extends Model
+class NoCrime extends Model
 {
     //protect date fields to return proper date format
     protected $dates = ['nocrimes_date'];

@@ -5,13 +5,15 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('jquery');
+require( 'jquery' );
 
 require('./bootstrap');
-window.Vue = require('vue');
+import Vue from 'vue'
 
 Vue.config.devtools = true;
 Vue.config.performance = true;
+//Vue.use(VueRouter);
+
 
 //Vue.http.headers.common['X-CSRF-TOKEN'] = document.head.querySelector('meta[name="csrf-token"]').content;
 
@@ -26,7 +28,6 @@ Vue.config.performance = true;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
 
 Vue.component(
     'passport-clients',
@@ -47,11 +48,11 @@ Vue.component(
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
+	
 
 //LEVEL 1 APPLICATION FORM
 import Level1App from './components/Level1App.vue';
-if(~window.location.pathname.indexOf("level1")){
+if(~window.location.pathname.indexOf("level1/")){
 
 	const level1app = new Vue({
 		el:'#level1app',
@@ -185,6 +186,7 @@ if(~window.location.pathname.indexOf("level6")){
 import Level7App from './components/Level7App.vue';
 import ConvictionApp from './components/ConvictionApp.vue';
 import CrimeApp from './components/CrimeApp.vue';
+//import NoCrimeApp from './components/NoCrimeApp.vue';
 
 if(~window.location.pathname.indexOf("level7")){
 
@@ -209,21 +211,31 @@ if(~window.location.pathname.indexOf("level7")){
 	});
 
 //CRIMES SUB-FORM FOR LEVEL 7
-	const crimeapp = new Vue({
-		el:'#crimeapp',
-		components: {
-			CrimeApp
-		},
-		render: h => h(CrimeApp)
+	// const crimeapp = new Vue({
+	// 	el:'#crimeapp',
+	// 	components: {
+	// 		CrimeApp
+	// 	},
+	// 	render: h => h(CrimeApp)
 
-	});
+	// });
+
+//NO-CRIMES SUB-FORM FOR LEVEL 7
+
+	// const nocrimeapp = new Vue({
+	// 	el:'#nocrimeapp',
+	// 	components: {
+	// 		NoCrimeApp
+	// 	},
+	// 	render: h => h(NoCrimeApp)
+	// });
 }
 
 
 //LEVEL 8 - SUB-FORMS
 import Level8App from './components/Level8App.vue';
+import NoPardonApp from './components/NoPardonApp.vue';
 import YouthCrimeApp from './components/YouthCrimeApp.vue';
-import AdultCrimeApp from './components/AdultCrimeApp.vue';
 import CitationApp from './components/CitationApp.vue';
 
 if(~window.location.pathname.indexOf("level8")){
@@ -238,7 +250,17 @@ if(~window.location.pathname.indexOf("level8")){
 
 	});
 
+//NO-PARDONS SUB-FORM FOR LEVEL 8
+	const nopardonapp = new Vue({
+		el:'#nopardonsapp',
+		components: {
+			NoPardonApp
+		},
+		render: h => h(NoPardonApp)
+	});
+
 //YOUTH CRIMES SUB-FORM FOR LEVEL 8
+
 	const youthcrimeapp = new Vue({
 		el:'#youthcrimesapp',
 		components: {
@@ -247,16 +269,8 @@ if(~window.location.pathname.indexOf("level8")){
 		render: h => h(YouthCrimeApp)
 	});
 
-//ADULT CRIMES SUB-FORM FOR LEVEL 8
-	const adultcrimeapp = new Vue({
-		el:'#adultcrimesapp',
-		components: {
-			AdultCrimeApp
-		},
-		render: h => h(AdultCrimeApp)
-	});
+	//CITATIONS SUB-FORM
 
-//CITATIONS SUB-FORM FOR LEVEL 8
 	const citationsapp = new Vue({
 		el:'#citationsapp',
 		components: {
@@ -264,31 +278,27 @@ if(~window.location.pathname.indexOf("level8")){
 		},
 		render: h => h(CitationApp)
 	});	
+
+
 }
 
 //LEVEL 9 SUB-FORMS
-
+import Level9App from './components/Level9App.vue';
 if(~window.location.pathname.indexOf("level9")){
 
-	//NO-CITATIONS SUB-FORM
-
-	const nocitationsapp = new Vue({
-		el:'#nocitationsapp',
+	const level9app = new Vue({
+		el:'#level9app',
 		components: {
-			NoCitationApp
+			Level9App
 		},
-		render: h => h(NoCitationApp)
+		render: h => h(Level9App)
+
 	});
+}
+//LEVEL 10 SUB-FORMS
 
-//CITATIONS SUB-FORM
-
-	const citationsapp = new Vue({
-		el:'#citationsapp',
-		components: {
-			CitationApp
-		},
-		render: h => h(CitationApp)
-	});	
+if(~window.location.pathname.indexOf("level10")){
+	//place holder
 }
 
 export function checkdate(d) {

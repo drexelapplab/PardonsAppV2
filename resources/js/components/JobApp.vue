@@ -1,4 +1,5 @@
 <template id="job-form">
+	
 	<div id="app">
 	<div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>
@@ -14,13 +15,14 @@
                     <th scope="res">Company</th>
                     <th scope="res">Position</th>
                     <th scope="res">&nbsp</th>
+                    <th scope="res">&nbsp</th>
                 </tr>
             </thead>
-
-			<tr v-for="job in jobs" class="table-dark">
+			<tr v-for="job in jobs" v-bind:id="'job'+job.id" class="table-dark">
 				<td class="text-black">{{ job.company }}</td>
 				<td class="text-black">{{ job.position }}</td>
 				<td><a v-on:click="edit(job.id)" class="btn btn-info">Edit</a></td>
+				<td><a v-on:click="del(job.id)" class="btn btn-info">Delete</a></td>
 			</tr>
 
 		</table>
@@ -73,7 +75,7 @@
 
         </div>
         <div class="form-group">
-		    <button style="margin-top:10px;" class="btn btn-info">Add</button>
+		    <button id="jobs-submit" style="margin-top:10px;" class="btn btn-info">Add</button>
 		</div>
 	</form>
 	</div>
@@ -118,11 +120,11 @@
 		},
 		methods: {
 			formSubmit: function(event) {
-
+				
 				if(!this.editstatus)
 				{
 	        		//send data to jobscontroller through api
-			        axios.post('/api/jobs/'+this.app_id, ({ 
+			        axios.post('/api/job/'+this.app_id, ({ 
 			        	app_id: this.app_id,
 			        	company: this.companyfield,
 			        	position: this.positionfield,
@@ -153,19 +155,33 @@
 				        } else {
 				            console.log('Error', error.message);
 				        }
-				        console.log(error.config);;
+				        console.log(error.config);
 				    });
 			    }
 			    if(this.editstatus == 'edit')
 			    {
-			    	//send job record to jobscontroller through api
-			    	axios.post('/api/job/'+this.job_id, ({
+			    	this.update();
+			    }
+
+			},
+			read() {
+				this.jobs.length = 0; //empty array
+				axios.get('/api/jobs/'+this.app_id).then(({ data }) => {
+					if(data.length > 0){data.forEach(job => {
+						this.jobs.push(new Job(job));
+					});}
+				});
+			},
+			update() {
+				
+			    	axios.put('/api/job/'+this.job_id, ({
 			        	company: this.companyfield,
 			        	position: this.positionfield,
 			        	time: this.timefield,
 			        	promotions: this.promotionsfield,
 			        	promo_descr: this.promo_descrfield,
-			        	evaluation: this.evaluationfield
+			        	evaluation: this.evaluationfield,
+			        	app_id: this.app_id
 			    	}))
 			    	.then(({ data }) => {
 			          this.companyfield = '';
@@ -175,23 +191,24 @@
 			          this.promo_descrfield = '';
 			          this.evaluationfield = '';
 			          this.editstatus = '';
-			          event.target.reset();
-			        });
-			    }
-
-			},
-			read() {
-				axios.get('/api/jobs/'+this.app_id).then(({ data }) => {
-					data.forEach(job => {
-						this.jobs.push(new Job(job));
-					});
-				});
-			},
-			update() {
-				//TODO
+			          this.read();
+			          
+			        })
+			        .catch((error) => {
+				        if (error.response) {
+				            console.log(error.response.data);
+				            console.log(error.response.status);
+				            console.log(error.response.headers);
+				        } else if (error.request) {
+				            console.log(error.request);
+				        } else {
+				            console.log('Error', error.message);
+				        }
+				        console.log(error.config);;
+				    });
 			},
 			edit: function(j) {
-				this.editstatus = 'edit';
+				this.editstatus = 'edit';			
 				axios.get('/api/job/'+j).then(({ data }) => {
 					data.forEach(job => {
 					this.companyfield = job.company;
@@ -202,12 +219,15 @@
 					this.evaluationfield = job.evaluation;
 					this.job_id = j;
 					});
-
-
 				});
 			},
-			del() {
-				//TODO
+			del: function(j) {
+				//delete record
+				//	this.errors.push('Deleting Record!');
+				axios.delete('/api/job/'+j,({app_id: this.app_id})).then(function (response) {	console.log('job deleted');
+				});
+				var jobID = document.getElementById('job'+j);
+				jobID.style.display = "none";
 			},
 			//validate form fields - add errors to the error array
       		checkForm: function(e) {

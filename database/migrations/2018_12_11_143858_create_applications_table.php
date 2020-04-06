@@ -83,10 +83,11 @@ class CreateApplicationsTable extends Migration
             $table->text('difficult_descr')->nullable();
             $table->string('jobdenied_status', 3)->nullable();
             $table->string('jobdenied_descr')->nullable();
-            $table->string('nopardon')->nullable();
+            $table->string('other_incidents', 3)->nullable();
             $table->string('harrasment')->nullable();
             $table->string('drinking')->nullable();
             $table->string('conduct')->nullable();
+            $table->text('narrative')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

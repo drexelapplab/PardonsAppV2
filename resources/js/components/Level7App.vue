@@ -1,7 +1,7 @@
 <template>    
     <div class="container">
         <!-- ERROR Message Container -->
-        <div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+        <div id="errormsg" v-if="errors.length" class="alert alert-danger custom-alert">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>
             <strong>Please correct the following errors:</strong>
             <ul>
@@ -9,8 +9,8 @@
             </ul>
         </div>
         <!-- SUCCESS Message Container -->
-        <div id="success" v-if="successmsg === 'success'" style="position:fixed;top:10%;width:65%;z-index:1100;left:15%;right:25%;" class="alert alert-success">
-            <h4>Congrats on completing Level 7!</h4>
+        <div id="success" v-if="success === 'success'" class="alert alert-success custom-success">
+            <h4>{{ successmsg }}</h4>
                 <p><a id="nextbtn" :href="'/applications/level8/'+id" class="btn btn-info">Continue to Level 8</a></p>
         </div>
         <form id="level7Form" @submit.prevent="formSubmit">
@@ -56,7 +56,8 @@
                 <a :href="'/applications/level6/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 6</a>
             </div>
             <div style="float:right;" class="col-md-6">
-                <button style="margin:20px;" class="btn btn-info">NEXT - LEVEL 8</button>
+                <button v-if="level<=savelevel || change == 'y'" v-on:click="formSubmit()" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 8</button>
+                <a v-else :href="'/applications/level8/'+id" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 8</a>
             </div>
 </div>     
     </div>
@@ -68,12 +69,15 @@
         //add data fields connected to the v-model in the template
         return{ 
             errors: [], //error array used for validating form data
+            convictions: [], //array used to check if any convictions were entered
             id: $("#appid").attr("appid"),
             level: '',
             successmsg: '',
             nexturl: '',
             check: '',
-            savelevel: 7
+            savelevel: 7,
+            success: '',
+            change: ''
 
         }
     },
@@ -94,16 +98,26 @@
         // //log entire model
         // console.log(this.model);
 
-        // this.checkForm(); //validate form
+        this.checkForm(); //validate form
+    
 
         // //check level
         if(this.level < 7){this.level = 7; }
 
+
         // //if no errors then update data
          if(!this.errors.length){
              window.axios.put(`/api/applications/`+this.id, {id: this.id, level: this.level, savelevel: this.savelevel}).then(() => { 
-                 //display success message
-                 this.successmsg = 'success';
+                //display success message
+                if(this.savelevel == this.level) {
+                    this.success = 'success';
+                    this.successmsg = 'Congrats on completing Level  7!';
+                }
+                else if(this.change == 'y') {
+                    
+                    this.success = 'success';
+                    this.successmsg = 'Level 7 has been updated successfully.';
+                } 
                 
              });
          }
@@ -112,11 +126,25 @@
       //validate form fields - add errors to the error array
       checkForm: function(e) {
         this.errors = [];
-        //if(!this.pardon_reasons){
-        //    this.errors.push("Please select the reasons you're seeking a pardon.");
-        //}
+
+        //check if any convictions have been entered
+        axios.get('/api/convictions/'+this.id).then(({ data }) => {
+                    data.forEach(conviction => {
+                        this.convictions.push('true');
+                    });
+                });
+        if(!this.convictions) {
+            this.errors.push("Please enter your conviction information to continue.");
+        }
+
       
-      }
+      },
+    dataChange: function(){
+            if(this.level >= this.savelevel) {
+               this.change = 'y'; 
+            }
+           
+        }
     },
     components: {
       

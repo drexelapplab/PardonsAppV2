@@ -11,26 +11,44 @@ use DB;
 
 class ConvictionsController extends Controller
 {
-    public function index()
+    public function index(Request $request, $id)
     {
-    	return response(Conviction::all()->jsonSerialize(), Response::HTTP_OK);
+        $convictions = Conviction::where('app_id', $id)->get();
+
+        return response($convictions->jsonSerialize(), Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
 
-
     	$convictionObj = new Conviction();
-    	$convictionObj->inc_date = Carbon::createFromFormat('m/d/Y', $request->inc_date);
-        $convictionObj->arr_date = Carbon::createFromFormat('m/d/Y', $request->arr_date);
+    	$convictionObj->inc_date = Carbon::createFromFormat('m/d/Y',$request->inc_date);
+        $convictionObj->arr_date = Carbon::createFromFormat('m/d/Y',$request->arr_date);
     	$convictionObj->docket = $request->docket;
+    	$convictionObj->county = $request->county;
     	$convictionObj->incident = $request->incident;
         $convictionObj->app_id = $request->app_id;
-    	$convictionObj->save();
+        $convictionObj->offense1 = $request->offense1;
+        $convictionObj->offense2 = $request->offense2;
+        $convictionObj->offense3 = $request->offense3;
+        $convictionObj->offense4 = $request->offense4;
+        $convictionObj->offense5 = $request->offense5;                                                
+        $convictionObj->offense6 = $request->offense6;
+        $convictionObj->offense7 = $request->offense7;
+        $convictionObj->offense8 = $request->offense8;
+        $convictionObj->offense9 = $request->offense9;
+        $convictionObj->offense10 = $request->offense10;
+    	$convictionObj->save();	
 
-    	//\Session::flash('flash_message', 'Record added!'):  	
+	    return response($convictionObj->jsonSerialize(), Response::HTTP_CREATED);
+    }
+    
+    public function show(Request $request, $id)
+    {
+        
+        $con = Conviction::find($id)->get();
 
-    	return response($convictionObj->jsonSerialize(), Response::HTTP_CREATED);
+        return response($con->jsonSerialize(), Response::HTTP_OK);
     }
 
     public function nextID()
@@ -40,13 +58,35 @@ class ConvictionsController extends Controller
     	return response($nextID, Response::HTTP_OK);
     }
 
-    public function update()
+    public function update(Request $request, $id)
     {
-    	//TODO
+    	$convictionObj = Conviction::find($id);
+
+        $convictionObj->inc_date = Carbon::createFromFormat('m/d/Y',$request->input('inc_date'));
+        $convictionObj->arr_date = Carbon::createFromFormat('m/d/Y',$request->input('arr_date'));
+        $convictionObj->docket = $request->input('docket');
+        $convictionObj->county = $request->input('county');
+        $convictionObj->incident = $request->input('incident');
+        $convictionObj->app_id = $request->input('app_id');
+        $convictionObj->offense1 = $request->input('offense1');
+        $convictionObj->offense2 = $request->input('offense2');
+        $convictionObj->offense3 = $request->input('offense3');
+        $convictionObj->offense4 = $request->input('offense4');
+        $convictionObj->offense5 = $request->input('offense5');
+        $convictionObj->offense6 = $request->input('offense6');
+        $convictionObj->offense7 = $request->input('offense7');
+        $convictionObj->offense8 = $request->input('offense8');
+        $convictionObj->offense9 = $request->input('offense9');
+        $convictionObj->offense10 = $request->input('offense10');
+        $convictionObj->save();
+
+        return response('con updated!', Response::HTTP_OK);
     }
 
-    public function delete()
+    public function destroy(Request $request, $id)
     {
-    	//TODO
+    	$conObj = Conviction::find($id)->delete();
+
+        return response('conviction deleted', Response::HTTP_OK);
     }
 }

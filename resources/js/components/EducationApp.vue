@@ -1,6 +1,6 @@
- <template>
+<template>
 	<div id="app">
-	<div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+	<div id="errormsg" v-if="errors.length" class="alert alert-danger custom-alert">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>
             <strong>Please correct the following errors:</strong>
             <ul>
@@ -14,38 +14,39 @@
                 	<th scope="col">Date</th>
                     <th scope="col">School</th>
                     <th scope="col">&nbsp</th>
+                    <th scope="col">&nbsp</th>
                 </tr>
             </thead>
-
-			<education-component
-				v-for="education in educations"
-				v-bind="educations"
-				:key="education.id"
-				@edit="edit"
-			></education-component>
+			<tr v-for="education in educations" v-bind:id="'ed'+education.id" class="table-dark">
+				<td class="text-black">{{ education.education_date }}</td>
+				<td class="text-black">{{ education.location }}</td>
+				<td><a v-on:click="edit(education.id)" class="btn btn-info">Edit</a></td>
+				<td><a v-on:click="del(education.id)" class="btn btn-info">Delete</a></td>
+			</tr>
 
 		</table>
 	<form id="Educationform" @submit.prevent="formSubmit">
 	    <div class="form-group">
-	    	<p>What type of school did you attend?</p>
-	    	<label for="edtype">
-                <input v-model="edtype" style="margin:5px;" type="radio" class="radio-inline" value="GED Program" />GED Program&nbsp;&nbsp;
-            </label>
-            <label for="edtype">
-                <input v-model="edtype" style="margin:5px;" type="radio" class="radio-inline" value="Professional Certification" />Professional Certification
-            </label>
-            <label for="edtype">
-                <input v-model="edtype" style="margin:5px;" type="radio" class="radio-inline" value="Trade School" />Trade School
+	    	<p>What type of school did you attend?<br />
+	    	<label for="edtypefield">
+                <input v-model="edtypefield" style="margin:5px;" type="radio" class="radio-inline" value="GED Program" />GED Program&nbsp;&nbsp;
             </label>
             <label for="edtypefield">
-                <input v-model="edtype" style="margin:5px;" type="radio" class="radio-inline" value="College" />College
+                <input v-model="edtypefield" style="margin:5px;" type="radio" class="radio-inline" value="Professional Certification" />Professional Certification
             </label>
+            <label for="edtypefield">
+                <input v-model="edtypefield" style="margin:5px;" type="radio" class="radio-inline" value="Trade School" />Trade School
+            </label>
+            <label for="edtypefield">
+                <input v-model="edtypefield" style="margin:5px;" type="radio" class="radio-inline" value="College" />College
+            </label></p>
 	    	<label for="education_datefield">When did you start?</label>
 	    	<input v-model="education_datefield" style="width:25%;" class="form-control">
 		    <label for="locationfield">Where did you go back to school?</label>
 		    <input v-model="locationfield" style="width:55%;" class="form-control">
 		    <label for="programfield">What did you study?</label>
 		    <input v-model="programfield" style="width:55%;" class="form-control" >
+
 		</div>
 		<div class="form-group">
             <p>Did you finish?<br />
@@ -70,7 +71,7 @@
             </p>
         </div>
         <div class="form-group">
-		    <button style="margin-top:10px;" class="btn btn-info">Add</button>
+		    <button style="margin-top:10px;" class="btn btn-info">Save</button>
 		</div>
 	</form>
 	</div>
@@ -79,6 +80,7 @@
 
 <script>
 	import { checkdate } from '../app.js'
+	
 	function Education({id, edtype, education_date, location, program, didfinish, finish, cert}) {
 		this.id = id;
 		this.edtype = edtype;
@@ -90,15 +92,14 @@
 		this.cert = cert;
 	}
 
-	import EducationComponent from './EducationComponent.vue';
-
 	export default {
 		data() {
 				return {
 					educations: [],
-					app_id: $("#appid").attr("appid"), //from appid in blade 			
+					app_id: $("#appid").attr("appid"), //from appid in blade
+					ed_id: '', 			
 					errors: [],
-					edtype: '',
+					edtypefield: '',
 					education_datefield:'',
 					locationfield: '',
 					programfield: '',
@@ -111,69 +112,127 @@
 		},
 		methods: {
 			formSubmit: function(event) {
-		        axios.post('/api/educations/store', ({ 
+		        if(!this.editstatus)
+				{
+					//log entire model
+        			console.log(this.model);
+
+        			this.checkForm(); //validate form
+        			if(!this.errors.length)
+				    {
+				        axios.post('/api/education/'+this.app_id, ({ 
+				        	app_id: this.app_id,
+				        	edtype: this.edtypefield,
+				        	education_date: this.education_datefield,
+				        	location: this.locationfield,
+				        	program: this.programfield,
+				        	didfinish: this.didfinishfield,
+				        	finish: this.finishfield,
+				        	cert: this.certfield
+				        	 }))
+				        .then(({ data }) => {
+				          this.educations.push(new Education(data));
+				          this.edtypefield = '';
+				          this.education_datefield = '';
+				          this.locationfield = '';
+				          this.programfield = '';
+				          this.didfinishfield = '';
+				          this.finishfield = '';
+				          this.certfield = '';
+				          event.target.reset();
+				        })
+				        .catch((error) => {
+					        if (error.response) {
+					            console.log(error.response.data);
+					            console.log(error.response.status);
+					            console.log(error.response.headers);
+					        } else if (error.request) {
+					            console.log(error.request);
+					        } else {
+					            console.log('Error', error.message);
+					        }
+					        console.log(error.config);;
+					    });
+					}
+				}
+			    if(this.editstatus == 'edit')
+			    {
+			    	this.update();
+			    }
+			},
+			read() {
+				this.educations.length = 0; //empty array
+				axios.get('/api/educations/'+this.app_id).then(({ data }) => {
+					if(data.length > 0){data.forEach(education => {
+						this.educations.push(new Education(education));
+					});}
+				});
+			},
+			update() {
+				axios.put('/api/education/'+this.ed_id, ({ 
 		        	app_id: this.app_id,
-		        	edtype: this.edtype,
+		        	edtype: this.edtypefield,
 		        	education_date: this.education_datefield,
 		        	location: this.locationfield,
 		        	program: this.programfield,
 		        	didfinish: this.didfinishfield,
 		        	finish: this.finishfield,
 		        	cert: this.certfield
-		        	 }))
+		        }))
 		        .then(({ data }) => {
 		          this.educations.push(new Education(data));
-		          this.edtype = '';
+		          this.edtypefield = '';
 		          this.education_datefield = '';
 		          this.locationfield = '';
 		          this.programfield = '';
 		          this.didfinishfield = '';
 		          this.finishfield = '';
 		          this.certfield = '';
-		          event.target.reset();
-		        })
-		        .catch((error) => {
-			        if (error.response) {
-			            console.log(error.response.data);
-			            console.log(error.response.status);
-			            console.log(error.response.headers);
-			        } else if (error.request) {
-			            console.log(error.request);
-			        } else {
-			            console.log('Error', error.message);
-			        }
-			        console.log(error.config);;
-			    });
+		          //reset education list
+		          this.read();
+		        });
+		        
 			},
-			read() {
-//TODO FORMAT EDUCATION DATE
-				axios.get('/api/educations/'+this.app_id).then(({ data }) => {
+			edit(j) {
+				this.editstatus = 'edit';			
+				axios.get('/api/education/'+j).then(({ data }) => {
 					data.forEach(education => {
-						this.educations.push(new Education(education));
+			        	this.edtypefield = education.edtype;
+			        	this.education_datefield = education.education_date;
+			        	this.locationfield = education.location;
+			        	this.programfield = education.program;
+			        	this.didfinishfield = education.didfinish;
+			        	this.finishfield = education.finish;
+			        	this.certfield = education.cert;
+			        	this.ed_id = j;
 					});
+				});				
+			},
+			del: (j) => {
+				
+				axios.delete('/api/education/'+j).then(function (response) {
+					console.log('ed deleted');
 				});
-			},
-			update() {
-				//TODO
-			},
-			edit() {
-				//TODO
-			},
-			del() {
-				//TODO
+				var edID = document.getElementById('ed'+j);
+				edID.style.display = "none";
+
 			},
 			//validate form fields - add errors to the error array
       		checkForm: function(e) {
+      			this.errors = [];
+      			if(!this.edtypefield){
+      				this.errors.push('Please select a school type.');
+      			}
       			if(!this.education_datefield){
             		this.errors.push('Date is required.');
         		}
         		if(!checkdate(this.education_datefield)){
-            		this.errors.push('Please use MM/DD/YYYY for your dates.')
+            		this.errors.push('Please use MM/DD/YYYY for your dates.');
         		}
       		}
 		},
 		components: {
-				EducationComponent
+				//EducationComponent
 		},
 		created() {
 				this.read();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\YouthCrime;
+use App\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Faker\Generator;
@@ -10,35 +11,59 @@ use Carbon\Carbon;
 
 class YouthCrimesController extends Controller
 {
-    public function index()
+    public function index(Request $request, $id)
     {
-    	return response(YouthCrime::all()->jsonSerialize(), Response::HTTP_OK);
+
+        $youthcrimes = YouthCrime::where('app_id', $id)->get();
+
+        return response($youthcrimes->jsonSerialize(), Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
-    	$youthcrimeObj = new YouthCrime();
+        //ADD NEW SCHOOL OR TRADE
+        $youthcrimeObj = new YouthCrime();
         $youthcrimeObj->app_id = $request['app_id'];
-    	$youthcrimeObj->youth_date = $request['youth_date'];
-    	$youthcrimeObj->county = $request['county'];
-        $youthcrimeObj->state = $request['state'];
+    	$youthcrimeObj->youth_date = Carbon::createFromFormat('m/d/Y', $request['youth_date']);
+    	$youthcrimeObj->location = $request['location'];
     	$youthcrimeObj->offense = $request['offense'];
     	$youthcrimeObj->adjudicated = $request['adjudicated'];
-    	$youthcrimeObj->sentence = $request['sentence'];
+    	$youthcrimeObj->disposition = $request['disposition'];
     	$youthcrimeObj->save();
 
-    	//\Session::flash('flash_message', 'Record added!'):  	
-
-    	return response($youthcrimeObj->jsonSerialize(), Response::HTTP_CREATED);
+        //SET APPLICATION SCHOOL STATUS
+        $application = Application::find($request['app_id']);
+        $application->other_incidents = $request['other_incidents'];
+        $application->save();
+        return response($youthcrimeObj->jsonSerialize(), Response::HTTP_CREATED);
     }
 
-    public function update()
+    public function show(Request $request, $id)
     {
-    	//TODO
+        
+        $yc = Youthcrime::find($id)->get();
+     
+        return response($yc->jsonSerialize(), Response::HTTP_OK);
     }
 
-    public function delete()
+    public function update(Request $request, $id)
     {
-    	//TODO
+        $youthcrimeObj = YouthCrime::find($id);
+
+        $youthcrimeObj->app_id = $request->input('app_id');
+        $youthcrimeObj->youth_date = Carbon::createFromFormat('m/d/Y', $request->input('youth_date'));
+        $youthcrimeObj->location = $request->input('location');
+        $youthcrimeObj->offense = $request->input('offense');
+        $youthcrimeObj->adjudicated = $request->input('adjudicated');
+        $youthcrimeObj->disposition = $request->input('disposition');
+        $youthcrimeObj->save();
+        return response('youth crime updated', Response::HTTP_CREATED);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $ycObj = YouthCrime::find($id)->delete();
+
+        return response('youth crime deleted', Response::HTTP_OK);
     }
 }

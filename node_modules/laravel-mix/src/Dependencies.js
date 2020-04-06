@@ -1,13 +1,25 @@
-let process = require('child_process');
-let File = require('../src/File');
+let childProcess = require('child_process');
+let Log = require('./Log');
+let argv = require('yargs').argv;
+let collect = require('collect.js');
 
 class Dependencies {
+    /**
+     * Create a new Dependencies instance.
+     *
+     * @param {Object} dependencies
+     */
     constructor(dependencies) {
         this.dependencies = dependencies;
     }
 
+    /**
+     * Install all dependencies that aren't available.
+     *
+     * @param {Boolean} abortOnComplete
+     */
     install(abortOnComplete = false) {
-        this.dependencies
+        collect(this.dependencies)
             .reject(dependency => {
                 try {
                     return require.resolve(
@@ -15,41 +27,71 @@ class Dependencies {
                     );
                 } catch (e) {}
             })
-            .tap(dependencies => {
+            .pipe(dependencies => {
+                if (!dependencies.count()) {
+                    return;
+                }
+
                 this.execute(
-                    this.buildInstallCommand(dependencies),
+                    this.buildInstallCommand(dependencies.all()),
+                    dependencies.all(),
                     abortOnComplete
                 );
             });
     }
 
-    execute(command, abortOnComplete) {
-        console.log(
-            'Additional dependencies must be installed. ' +
-                'This will only take a moment.'
+    /**
+     * Execute the provided console command.
+     *
+     * @param {string}  command
+     * @param {Boolean} abortOnComplete
+     */
+    execute(command, dependencies, abortOnComplete) {
+        Log.feedback(
+            'Additional dependencies must be installed. This will only take a moment.'
         );
 
-        process.execSync(command);
+        Log.feedback(`Running: ${command}`);
 
+        childProcess.execSync(command);
+
+        Log.feedback(
+            'Okay, done. The following packages have been installed and saved to your package.json dependencies list:'
+        );
+
+        dependencies.forEach(d => Log.feedback('- ' + d));
+
+        this.respond(abortOnComplete);
+    }
+    /**
+     * Build the dependency install command.
+     *
+     * @param {Object}  dependencies
+     * @param {Boolean} forceNpm
+     */
+    buildInstallCommand(dependencies) {
+        dependencies = [].concat(dependencies).join(' ');
+
+        return `npm install ${dependencies} --save-dev --production=false`;
+    }
+
+    /**
+     * Complete the install process.
+     *
+     * @param {Boolean} abortOnComplete
+     */
+    respond(abortOnComplete) {
         if (abortOnComplete) {
-            console.log(
+            Log.feedback(
                 typeof abortOnComplete === 'string'
                     ? abortOnComplete
                     : 'Finished. Please run Mix again.'
             );
 
-            process.exit();
+            if (!argv['$0'].includes('ava')) {
+                process.exit();
+            }
         }
-    }
-
-    buildInstallCommand(dependencies) {
-        dependencies = [].concat(dependencies).join(' ');
-
-        if (File.exists('yarn.lock')) {
-            return `yarn add ${dependencies} --dev`;
-        }
-
-        return `npm install ${dependencies} --save-dev`;
     }
 }
 

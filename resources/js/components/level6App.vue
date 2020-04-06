@@ -1,7 +1,7 @@
 <template>    
     <div class="container">
         <!-- ERROR Message Container -->
-        <div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+        <div id="errormsg" v-if="errors.length" class="alert alert-danger custom-alert">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>
             <strong>Please correct the following errors:</strong>
             <ul>
@@ -9,8 +9,8 @@
             </ul>
         </div>
         <!-- SUCCESS Message Container -->
-        <div id="success" v-if="successmsg === 'success'" style="position:fixed;top:10%;width:65%;z-index:1100;left:15%;right:25%;" class="alert alert-success">
-            <h4>Congrats on completing Level 6!</h4>
+        <div id="success" v-if="success === 'success'" class="alert alert-success custom-success">
+            <h4>{{ successmsg }}</h4>
                 <p><a id="nextbtn" :href="'/applications/level7/'+id" class="btn btn-info">Continue to Level 7</a></p>
         </div>
         <form id="level6Form" @submit.prevent="formSubmit">
@@ -98,10 +98,10 @@
                     <div class="form-group">
                         <p>Has living with a criminal record made your life more difficult?</p>
                         <label for="difficult_status">
-                            <input v-model="difficult_status" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="difficult_status == 'Yes'" />Yes
+                            <input v-model="difficult_status" v-on:change="dataChange();" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="difficult_status == 'Yes'" />Yes
                         </label>
                         <label for="difficult_status">
-                            <input v-model="difficult_status" style="margin:5px;" type="radio" class="radio-inline" value="No" :checked="difficult_status == 'No'" />No
+                            <input v-model="difficult_status" v-on:change="dataChange();" style="margin:5px;" type="radio" class="radio-inline" value="No" :checked="difficult_status == 'No'" />No
                         </label>
                     </div>
                     <div class="form-group">
@@ -111,16 +111,16 @@
                     <div class="form-group">
                         <p>Have you ever been denied a job or fired from a job because of your criminal record? Or have you been denied a promotion or pay increase in your current job because of your record?</p>
                         <label for="jobdenied_status">
-                            <input v-model="jobdenied_status" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked=
+                            <input v-model="jobdenied_status" v-on:change="dataChange();" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked=
                             "jobdenied_status == 'Yes'" />Yes
                         </label>
                         <label for="jobdenied_status">
-                            <input v-model="jobdenied_status" style="margin:5px;" type="radio" class="radio-inline" value="No" :checked="jobdenied_status == 'No'"/>No
+                            <input v-model="jobdenied_status" v-on:change="dataChange();" style="margin:5px;" type="radio" class="radio-inline" value="No" :checked="jobdenied_status == 'No'"/>No
                         </label>
                     </div>
                     <div class="form-group">
                         <label style="width:75%;" for="jobdenied_descr">If yes, explain what bad thing happened to you.</label>
-                        <textarea v-model="jobdenied_descr" style="width:75%;" class="form-control"></textarea>
+                        <textarea v-model="jobdenied_descr" v-on:change="dataChange();" style="width:75%;" class="form-control"></textarea>
                     </div>
                     <hr style="background-color:#f39c12;" />
                     <div>
@@ -129,10 +129,11 @@
 
                     <div class="row form-group">
                         <div style="float:left;" class="col-md-6">
-                          <a :href="'/applications/level5/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 5</a>
+                          <a :href="'/applications/level5/'+id" v-on:change="dataChange();" style="margin:20px;" class="btn btn-info">BACK - LEVEL 5</a>
                         </div>
                         <div style="float:right;" class="col-md-6">
-                          <button style="margin:20px;" class="btn btn-info">NEXT - LEVEL 7</button>
+                            <button v-if="level<=savelevel || change == 'y'" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 7</button>
+                            <a v-else :href="'/applications/level7/'+id" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 7</a>
                         </div>
                     </div>
             </div>
@@ -170,13 +171,15 @@
             nexturl: '',
             check: '',
             level: '',
-            savelevel: 6
+            savelevel: 6,
+            success: '',
+            change: ''
         }
     },
     methods: {
         mounted() {
         //get data for app_id form
-        window.axios.get(`/api/application/`+this.id).then(({ data }) => {
+        window.axios.get('/api/application/'+this.id).then(({ data }) => {
             if(data[0].pardon_reasons){this.reasons = JSON.parse(data[0].pardon_reasons)};
             this.difficult_status= data[0].difficult_status;
             this.difficult_descr = data[0].difficult_descr;
@@ -204,8 +207,18 @@
         //if no errors then update data
         if(!this.errors.length){
             window.axios.put(`/api/applications/`+this.id, {id: this.id, pardon_reasons: this.pardon_reasons, difficult_status: this.difficult_status, difficult_descr: this.difficult_descr, jobdenied_status: this.jobdenied_status, jobdenied_descr: this.jobdenied_descr, level: this.level, savelevel: this.savelevel}).then(() => { 
+                
                 //display success message
-                this.successmsg = 'success';
+                if(this.savelevel == this.level) {
+                    this.success = 'success';
+                    this.successmsg = 'Congrats on completing Level  6!';
+                }
+                else if(this.change == 'y') {
+                    
+                    this.success = 'success';
+                    this.successmsg = 'Level 6 has been updated successfully.';
+                } 
+                
                 
             });
         }
@@ -230,9 +243,12 @@
             this.errors.push('Describe how you were denied a job.');
         }        
       },
-      checkreasons(check){
-
-      }
+    dataChange: function(){
+            if(this.level >= this.savelevel) {
+               this.change = 'y'; 
+            }
+           
+        }
     },
     components: {
       

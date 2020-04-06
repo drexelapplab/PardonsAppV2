@@ -21,8 +21,9 @@ class CreateEducationsTable extends Migration
             $table->string('location');
             $table->string('program');
             $table->string('didfinish');
-            $table->string('finish');
+            $table->string('finish')->nullable();
             $table->string('cert');
+            $table->string('filename')->nullable();
             $table->timestamps();
         });
     }

@@ -16,10 +16,10 @@ class CreateCitationsTable extends Migration
         Schema::create('citations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('app_id');
-            $table->date('citation_date');
+            $table->date('citations_date');
             $table->string('location');
             $table->string('offense');
-            $table->string('disposition');
+            $table->string('penalty');
             $table->timestamps();
         });
     }

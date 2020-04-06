@@ -1,13 +1,26 @@
 <!-- Only show for thos logged in -->
 @guest
 @else
-<div style="width:75%;padding-left:5%;padding-bottom:20px;" class="panel panel-primary">
-  <div class="panel-heading h5">Status: <span class="label label-warning">Level 2</span></div>
-  <div class="panel-body">
-    <div class="progress progress-striped">
-		<div class="progress-bar progress-bar-info" style="width: 10%"></div>
-	</div>
-  </div>
+
+
+
+<div class="row" style="width:75%;margin-left:10%;margin-right:10%;padding:20px;">
+	<div class="col-sm-1 btn level-bar">Level:</div>
+	@for ($i = 1; $i < 11; $i++)
+		@if ($application->status >= $i)
+			<div class="col-sm-1 btn bg-info level-bar {{ set_level('applications/level'.$i.'*') }}">
+				<a href="../level{{ $i }}/{{ $application->id }}"><span>{{ $i }}</span></a>
+			</div>
+			
+		@elseif ($application->status == ($i - 1))
+			<div class="col-sm-1 btn bg-success level-bar {{ set_level('applications/level'.$i.'*') }}">
+				<a href="../level{{ $i }}/{{ $application->id }}"><span>{{ $i }}</span></a>
+			</div>
+		@elseif ($application->status < $i )
+			<div class="col-sm-1 btn bg-secondary level-bar">{{ $i }}</div>
+		@endif
+	@endfor
+
 </div>
 @endguest
 

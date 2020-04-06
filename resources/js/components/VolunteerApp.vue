@@ -14,15 +14,15 @@
                 	<th scope="col">Date</th>
                     <th scope="col">Who Helped?</th>
                     <th scope="col">&nbsp</th>
+                    <th scope="col">&nbsp</th>
                 </tr>
             </thead>
-
-			<volunteer-component
-				v-for="volunteer in volunteers"
-				v-bind="volunteer"
-				:key="volunteer.id"
-				@edit="edit"
-			></volunteer-component>
+            <tr v-for="volunteer in volunteers" v-bind:id="'vol'+volunteer.id" class="table-dark">
+				<td class="text-black">{{ volunteer.vol_date }}</td>
+				<td class="text-black">{{ volunteer.vol_helped }}</td>
+				<td><a v-on:click="edit(volunteer.id)" class="btn btn-info">Edit</a></td>
+				<td><a v-on:click="del(volunteer.id)" class="btn btn-info">Delete</a></td>	
+			</tr>
 
 		</table>
 	<form id="VolunteerForm" @submit.prevent="formSubmit">
@@ -85,7 +85,7 @@
 		this.vol_time = vol_time;
 	}
 
-	import VolunteerComponent from './VolunteerComponent.vue';
+	//import VolunteerComponent from './VolunteerComponent.vue';
 
 	export default {
 		data() {
@@ -93,6 +93,7 @@
 					volunteers: [],
 					errors: [],
 					app_id: $("#appid").attr("appid"), //from appid in blade template
+					vol_id: '',
 					vol_descrfield:'',
 					vol_datefield: '',
 					vol_helpedfield: '',
@@ -104,40 +105,50 @@
 		},
 		methods: {
 			formSubmit: function(event) {
-				this.checkForm(); //validate form
-				if(!this.errors.length){
-			        axios.post('/api/volunteers/'+this.app_id, ({ 
-			        	app_id: this.app_id,
-			        	vol_descr: this.vol_descrfield,
-			        	vol_date: this.vol_datefield,
-			        	vol_helped: this.vol_helpedfield,
-			        	vol_organize: this.vol_organizefield,
-			        	vol_time: this.vol_timefield
-			        	 }))
-			        .then(({ data }) => {
-			          	this.volunteers.push(new Volunteer(data));
-		          		this.vol_descrfield = '';
-						this.vol_datefield = '';
-						this.vol_helpedfield = '';
-						this.vol_organizefield = '';
-						this.vol_timefield = '';
-						event.target.reset();
-			        })
-			        .catch((error) => {
-		                if (error.response) {
-		                    console.log(error.response.data);
-		                    console.log(error.response.status);
-		                    console.log(error.response.headers);
-		                } else if (error.request) {
-		                    console.log(error.request);
-		                } else {
-		                    console.log('Error', error.message);
-		                }
-		                console.log(error.config);;
-		            });
+		        if(!this.editstatus)
+				{
+					//log entire model
+        			console.log(this.model);				
+					this.checkForm(); //validate form
+					if(!this.errors.length){
+				        axios.post('/api/volunteer/'+this.app_id, ({ 
+				        	app_id: this.app_id,
+				        	vol_descr: this.vol_descrfield,
+				        	vol_date: this.vol_datefield,
+				        	vol_helped: this.vol_helpedfield,
+				        	vol_organize: this.vol_organizefield,
+				        	vol_time: this.vol_timefield
+				        	 }))
+				        .then(({ data }) => {
+				          	this.volunteers.push(new Volunteer(data));
+			          		this.vol_descrfield = '';
+							this.vol_datefield = '';
+							this.vol_helpedfield = '';
+							this.vol_organizefield = '';
+							this.vol_timefield = '';
+							event.target.reset();
+				        })
+				        .catch((error) => {
+			                if (error.response) {
+			                    console.log(error.response.data);
+			                    console.log(error.response.status);
+			                    console.log(error.response.headers);
+			                } else if (error.request) {
+			                    console.log(error.request);
+			                } else {
+			                    console.log('Error', error.message);
+			                }
+			                console.log(error.config);;
+			            });
+				    }
+				}
+			    if(this.editstatus == 'edit')
+			    {
+			    	this.update();
 			    }
 			},
 			read() {
+				this.volunteers.length = 0;
 				axios.get('/api/volunteers/'+this.app_id).then(({ data }) => {
 					data.forEach(volunteer => {
 						this.volunteers.push(new Volunteer(volunteer));
@@ -145,13 +156,46 @@
 				});
 			},
 			update() {
-				//TODO
+				axios.put('/api/volunteer/'+this.vol_id, ({ 
+					app_id: this.app_id,
+					vol_descr: this.vol_descrfield,
+					vol_date: this.vol_datefield,
+					vol_helped: this.vol_helpedfield,
+					vol_organize: this.vol_organizefield,
+					vol_time: this.vol_timefield
+				}))
+				.then(({data}) => {
+					this.volunteers.push(new Volunteer(data));
+					this.vol_descrfield = '';
+					this.vol_datefield = '';
+					this.vol_helpedfield = '';
+					this.vol_organizefield = '';
+					this.vol_timefield = '';
+					//reset volunteer list
+					this.read();
+				});
 			},
-			edit() {
-				//TODO
+			edit(j) {
+				this.editstatus = 'edit';			
+				axios.get('/api/volunteer/'+j).then(({ data }) => {
+					data.forEach(volunteer => {
+						this.vol_descrfield = volunteer.vol_descr;
+						this.vol_datefield = volunteer.vol_date;
+						this.vol_helpedfield = volunteer.vol_helped;
+						this.vol_organizefield = volunteer.vol_organize;
+						this.vol_timefield = volunteer.vol_time;	
+						this.vol_id = j;
+					});
+				});
 			},
-			del() {
-				//TODO
+			del(j){
+	
+				axios.delete('/api/volunteer/'+j,({app_id: this.app_id})).then(function (response) {
+					console.log('vol deleted');
+				});
+				var volID = document.getElementById('vol'+j);
+				volID.style.display = "none";
+
 			},
 			//validate form fields - add errors to the error array
       		checkForm: function(e) {
@@ -164,7 +208,7 @@
       		}
 		},
 		components: {
-				VolunteerComponent
+				//VolunteerComponent
 		},
 		created() {
 				this.read();

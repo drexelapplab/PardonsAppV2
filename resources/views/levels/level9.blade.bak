@@ -1,0 +1,211 @@
+@extends('layouts.index')
+
+    @section('head')
+    @endsection
+
+    @section('header')
+    @endsection
+    
+    @section('content')
+        @auth <!-- are you logged in? -->
+        @include('progress.progress', ['application' => $application])
+        <script>
+            
+            function updateModal(m) {
+                var exp = $('#'+m);
+                var modal = $('#exp-details');
+                modal.html("");
+                modal.html(exp.html());
+            }
+
+        </script>
+        <div class="container">
+            <div class="card text-white bg-secondary mb-3">
+                
+                <div class="card-body">
+                    <h4 class="card-title text-warning">LEVEL 9: <span class="text-info">PERSONAL NARRATIVE</span></h4>
+                    <div class="card-text">
+                        The Board of Pardons is looking to understand your story. Use the information regarding your employment, education, and volunteering to provide a picture of your positive efforts since serving your sentence.  Use statements like the following to show your appreciation for this opportunity.
+                            </p>
+                            <p><strong>Example Phrases:</strong>
+                                <ul>
+                                    <li>"I'm thankful for this opportunity..."</li>
+                                    <li>"I regret my prior actions..."</li>
+                                    <li>other sentences?</li>
+                                </ul>
+                            </p>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-warning">Narrative</h5>
+                <div class="card-text">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <form class="records" method="POST" action="/applications/level9/{{ $application->id }}">
+                            {{ csrf_field() }}
+                                <div class="form-group">
+                                    <textarea v-model="narrative" class="form-control" style="text-align:left;" rows="20">
+                                    </textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-info">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="modal fade" id="exp-modal" tabindex="-1" role="dialog" aria-labelledby="Experience Details" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-body">
+                                    <p id="exp-details"></p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <h5>Experience Information</h5>
+                            <p>Use the information you provided below to assist with your narrative. If you need to add additional information, go to <a href="../level2/{{ $application->id }}"> Level 2 </a>and then return here. </p>
+                            <div>
+                                <ul class="nav nav-tabs">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#jobs">Jobs</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#schools">Education</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#volunteer">Vols</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#recs">
+                                    Recs</a>
+                                    </li>
+                                </ul>
+                                <div id="narrative-content" class="tab-content">
+
+                                    <div class="tab-pane fade active show" id="jobs">
+                                        @if (count($jobs) == 0)
+                                            <p>No information provided.</p>
+                                        @endif                                        
+                                        <ul>
+                                            @foreach ($jobs as $job)
+                                                <li class="nar-tabs">
+                                                    <a href="#" data-toggle="modal" data-target="#exp-modal" onclick="updateModal('job{{ $job->id }}');">
+                                                        {{ $job->company }} - {{ $job->position }}
+                                                    </a>
+                                                    <div id="job{{ $job->id }}" style="display:none;">
+                                                        <div  class="nar-details">
+                                                            <h5>Job Details</strong></h5>
+                                                            <hr />
+                                                            <ul>
+                                                                <li><strong>Company:</strong> {{ $job->company }} </li>
+                                                                <li><strong>Position:</strong> {{ $job->position }} </li>
+                                                                <li><strong>Time:</strong> {{ $job->time }}</li>
+                                                                <li><strong>Promotions:</strong> {{ $job->promotions }}</li>
+                                                                 <li><strong>Promotion Description: </strong>{{ $job->promo_descr }}</li>
+                                                                <li><strong>Good Evalutions: </strong>{{ $job->evaluation }}</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    <div class="tab-pane fade" id="schools">
+                                        @if (count($schools) == 0)
+                                            <p>No information provided.</p>
+                                        @endif
+                                        
+                                        <ul> 
+                                            @foreach ($schools as $school)
+                                                <a href="#" data-toggle="modal" data-target="#exp-modal" onclick="updateModal('school{{ $school->id }}');">
+                                                    <li class="nar-tabs">{{$school->location }}</li>
+                                                </a>
+                                                <div id="school{{ $school->id }}" style="display:none;">
+                                                    <div  class="nar-details">
+                                                        <h5>School Details</h5>
+                                                        <hr />
+                                                        <ul>
+                                                            <li><strong>Location:</strong> {{ $school->location }}</li>
+                                                            <li><strong>Type:</strong> {{ $school->edtype }}</li>
+                                                            <li><strong>Date:</strong> {{ $school->education_date }}</li>
+                                                            <li><strong>Program</strong> {{ $school->program }}</li>
+                                                            <li><strong>Certification:</strong> {{ $school->cert }}</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    <div class="tab-pane fade" id="volunteer">
+                                        @if (count($volunteers) == 0)
+                                            <p>No information provided.</p>
+                                        @endif
+                                        <ul>
+                                            @foreach ($volunteers as $volunteer)                                        
+                                            <a href="#" data-toggle="modal" data-target="#exp-modal" onclick="updateModal('vol{{ $volunteer->id }}');">
+                                                <li class="nar-tabs">
+                                                    {{ $volunteer->vol_date }} - {{ $volunteer->vol_helped }}</li>
+                                            </a>
+                                            <div id="vol{{ $volunteer->id }}" style="display:none;">
+                                                <div  class="nar-details">
+                                                    <h5>Volunteer Details</h5>
+                                                    <hr />
+                                                    <ul>
+                                                        <li><strong>Date:</strong> {{ $volunteer->vol_date}}</li>
+                                                        <li><strong>Who Helped?:</strong> {{ $volunteer->vol_helped }}</li>
+                                                        <li><strong>Description:</strong> {{ $volunteer->vol_descr }}</li>
+                                                        <li><strong>Did you help organize it?</strong> {{ $volunteer->vol_organize }}</li>
+                                                    </ul>
+                                                </div>
+                                            </div> 
+                                        @endforeach
+                                        </ul>                                      
+                                    </div>
+                                    <div class="tab-pane fade" id="recs">
+                                        @if (count($recommends) == 0)
+                                            <p>No information provided.</p>
+                                        @endif
+                                        <ul>
+                                            @foreach ($recommends as $recommend)                                        
+                                            <a href="#" data-toggle="modal" data-target="#exp-modal" onclick="updateModal('rec{{ $recommend->id }}');">
+                                                <li class="nar-tabs">
+                                                    {{ $recommend->name }} - {{ $recommend->location }}</li>
+                                            </a>
+                                            <div id="rec{{ $recommend->id }}" style="display:none;">
+                                                <div  class="nar-details">
+                                                    <h5>Recommendation Details</h5>
+                                                    <hr />
+                                                    <ul>
+                                                        <li><strong>Name:</strong> {{ $recommend->name}}</li>
+                                                        <li><strong>Type:</strong> {{ $recommend->type }}</li>
+                                                        <li><strong>Location:</strong> {{ $recommend->location }}</li>
+                                                        <li><strong>Email:</strong> {{ $recommend->email }}</li>
+                                                        <li><strong>Phone:</strong> {{ $recommend->phone }}</li>
+                                                    </ul>
+                                                </div>
+                                            </div> 
+                                        @endforeach
+                                        </ul>                                      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="row form-group">
+        <div style="float:left;" class="col-md-6">
+          <a href="../level8/{{ $application->id }}" style="margin:20px;" class="btn btn-info">BACK - LEVEL 8</a>
+        </div>
+        <div style="float:right;" class="col-md-6">
+            <a href="../level10/{{ $application->id }}" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 10</a>
+        </div>
+</div>
+
+        @endauth
+    @endsection

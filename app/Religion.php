@@ -8,4 +8,9 @@ class Religion extends Model
 {
     //
     protected $table = 'religions';
+    
+    public function application() 
+    {
+        return $this->belongsTo('App\Application');
+    }     
 }

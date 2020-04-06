@@ -21,6 +21,7 @@ class CreateRecommendsTable extends Migration
             $table->string('location');
             $table->string('email');
             $table->string('phone');
+            $table->string('filename')->nullable();
             $table->timestamps();
         });
     }

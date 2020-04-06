@@ -8,7 +8,6 @@ let components = [
     'React',
     'Coffee',
     'TypeScript',
-    'FastSass',
     'Less',
     'Sass',
     'Stylus',
@@ -23,7 +22,8 @@ let components = [
     'Extract',
     'Notifications',
     'DisableNotifications',
-    'PurifyCss'
+    'PurifyCss',
+    'DumpWebpackConfig'
 ];
 
 class ComponentFactory {

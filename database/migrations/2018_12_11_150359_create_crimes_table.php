@@ -15,10 +15,8 @@ class CreateCrimesTable extends Migration
     {
         Schema::create('crimes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('app_id');
-            $table->string('crime_date');
+            $table->integer('con_id');
             $table->string('crime');
-            $table->text('sentence');
             $table->timestamps();
         });
     }

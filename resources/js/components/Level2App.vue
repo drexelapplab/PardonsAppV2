@@ -1,7 +1,7 @@
 <template>    
     <div class="container">
         <!-- ERROR Message Container -->
-        <div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+        <div id="errormsg" v-if="errors.length" class="alert alert-danger custom-alert">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>
             <strong>Please correct the following errors:</strong>
             <ul>
@@ -9,8 +9,8 @@
             </ul>
         </div>
         <!-- SUCCESS Message Container -->
-        <div id="success" v-if="successmsg === 'success'" style="position:fixed;top:10%;width:65%;z-index:1100;left:15%;right:25%;" class="alert alert-success">
-            <h4>Congrats on completing Level 2!</h4>
+        <div id="success" v-if="success === 'success'" class="alert alert-success custom-success">
+            <h4>{{ successmsg }}</h4>
                 <p><a id="nextbtn" :href="'/applications/level3/'+id" class="btn btn-info">Continue to Level 3</a></p>
         </div>
         <form id="level2Form" @submit.prevent="formSubmit">
@@ -34,7 +34,7 @@
                     <div class="card-text">                      
                                 <div class="form-group">
                                     <label for="job_how_long">Since your conviction, have you been able to work?</label>
-                                    <select v-model="job_how_long" style="width:30%;" class="form-control">
+                                    <select v-model="job_how_long" v-on:change="dataChange();" style="width:30%;" class="form-control">
                                         <option>Every Year</option>
                                         <option>Almost Every Year</option>
                                         <option>Most Years</option>
@@ -57,10 +57,10 @@
                         </p>
 
                         <label for="retschool_status">
-                            <input v-model="retschool_status" onclick="showRetSchool()" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="retschool_status == 'Yes'" />Yes&nbsp;&nbsp;
+                            <input v-model="retschool_status" v-on:change="dataChange();" onclick="showRetSchool()" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="retschool_status == 'Yes'" />Yes&nbsp;&nbsp;
                         </label>
                         <label for="retschool_status">
-                            <input v-model="retschool_status" style="margin:5px;" onclick="hideRetSchool()" type="radio" class="radio-inline" value="No" :checked="retschool_status == 'No'" />No
+                            <input v-model="retschool_status" v-on:change="dataChange();"style="margin:5px;" onclick="hideRetSchool()" type="radio" class="radio-inline" value="No" :checked="retschool_status == 'No'" />No
                         </label>
                     </div>
                     <div id="retschoolForm" class="form-group" v-show="retschool_status == 'Yes'">
@@ -76,10 +76,10 @@
                     <div class="form-group">
                         <p>Do you think someone there would be willing to write a letter of recommendation for you?<br />
                             <label for="rec_status">
-                            <input v-model="rec_status" style="margin:5px;" type="radio" class="radio-inline" onclick="showRecommend()" value="Yes" :checked="rec_status == 'Yes'"/>Yes&nbsp;&nbsp;
+                            <input v-model="rec_status" v-on:change="dataChange();" style="margin:5px;" type="radio" class="radio-inline" onclick="showRecommend()" value="Yes" :checked="rec_status == 'Yes'"/>Yes&nbsp;&nbsp;
                             </label>
                             <label for="rec_status">
-                            <input v-model="rec_status" style="margin:5px;" type="radio" class="radio-inline" onclick="hideRecommend()" value="No" :checked="rec_status == 'No'" />No
+                            <input v-model="rec_status" v-on:change="dataChange();" style="margin:5px;" type="radio" class="radio-inline" onclick="hideRecommend()" value="No" :checked="rec_status == 'No'" />No
                             </label>
                         </p>
                     </div>
@@ -97,16 +97,16 @@
                         <div class="form-group">
                             <p>Has your conviction kept you from getting into any program or school, or from getting any job?<br />                                
                             <label for="con_status">
-                                <input v-model="con_status" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="con_status == 'Yes'" />Yes&nbsp;&nbsp;
+                                <input v-model="con_status" v-on:change="dataChange();" style="margin:5px;" type="radio" class="radio-inline" value="Yes" :checked="con_status == 'Yes'" />Yes&nbsp;&nbsp;
                             </label>
                             <label for="con_status">
-                                <input v-model="con_status" style="margin:5px;" type="radio" class="radio-inline" value="No" :checked="con_status == 'No'" />No
+                                <input v-model="con_status" v-on:change="dataChange();" style="margin:5px;" type="radio" class="radio-inline" value="No" :checked="con_status == 'No'" />No
                             </label></p>
 
                         </div>
                         <div class="form-group">
                             <label for="con_descr">Tell us about that. What did you apply for that you wanted to get in, but were not allowed in?</label>
-                            <textarea v-model="con_descr" style="width:75%;" class="form-control" rows="4"></textarea>
+                            <textarea v-model="con_descr" v-on:change="dataChange();" style="width:75%;" class="form-control" rows="4"></textarea>
                         </div>
                     </div>
             </div>
@@ -117,7 +117,8 @@
                   <a :href="'/applications/level1/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 1</a>
                 </div>
                 <div style="float:right;" class="col-md-6">
-                  <button style="margin:20px;" class="btn btn-info">NEXT - LEVEL 3</button>
+                    <button v-if="level<=savelevel || change == 'y'" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 3</button>
+                    <a v-else :href="'/applications/level3/'+id" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 3</a>
                 </div>
             </div>  
         </form>      
@@ -139,12 +140,15 @@
             level: '',
             successmsg: '',
             nexturl: '',
-            savelevel: 2
+            level: '',
+            savelevel: 2,
+            success: '',
+            change: ''
         }
     },
     methods: {
         mounted() {
-        //get data for app_id form
+        //get data for app_id
         window.axios.get('/api/application/'+this.id).then(({ data }) => {
                     this.job_how_long = data[0].job_how_long;
                     this.retschool_status= data[0].retschool_status
@@ -169,8 +173,17 @@
         //if no errors then update data
         if(!this.errors.length){
             window.axios.put(`/api/applications/`+this.id, {id: this.id, job_how_long: this.job_how_long, retschool_status: this.retschool_status, rec_status: this.rec_status, con_status: this.con_status, con_descr: this.con_descr, level: this.level, savelevel: this.savelevel }).then(() => { 
-                //display success message
-                this.successmsg = 'success';
+                    //display success message
+                    if(this.savelevel == this.level) {
+                        this.success = 'success';
+                        this.successmsg = 'Congrats on completing Level  2!';
+                    }
+                    else if(this.change == 'y') {
+                        
+                        this.success = 'success';
+                        this.successmsg = 'Level 2 has been updated successfully.';
+                    } 
+                
             });
         }
 
@@ -193,7 +206,13 @@
             this.errors.push('Please desribe your experience of being denied.');
         }         
         //e.preventDefault();
-      }
+      },
+    dataChange: function(){
+            if(this.level >= this.savelevel) {
+               this.change = 'y'; 
+            }
+           
+        }
     },
     components: {
       

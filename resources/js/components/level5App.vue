@@ -1,7 +1,7 @@
 <template>    
     <div class="container">
         <!-- ERROR Message Container -->
-        <div id="errormsg" v-if="errors.length" style="position:fixed;top:1%;width:65%;z-index:1000;" class="alert alert-danger">
+        <div id="errormsg" v-if="errors.length" class="alert alert-danger custom-alert">
             <button type="button" class="close" v-on:click="errors = []">&times;</button>
             <strong>Please correct the following errors:</strong>
             <ul>
@@ -9,8 +9,8 @@
             </ul>
         </div>
         <!-- SUCCESS Message Container -->
-        <div id="success" v-if="successmsg === 'success'" style="position:fixed;top:10%;width:65%;z-index:1100;left:15%;right:25%;" class="alert alert-success">
-            <h4>Congrats on completing Level 5!</h4>
+        <div id="success" v-if="success === 'success'" class="alert alert-success custom-success">
+            <h4>{{ successmsg }}</h4>
                 <p><a id="nextbtn" :href="'/applications/level6/'+id" class="btn btn-info">Continue to Level 6</a></p>
         </div>
         <form id="level5Form" @submit.prevent="formSubmit">
@@ -28,64 +28,64 @@
                         <div class="form-group">
                             <p style="width:75%;">Today, are you still drinking alcohol or using drugs?</p>
                             <label for="drink_status">
-                                <input v-model="drink_status" type="radio" style="margin:5px;" class="radio-inline" onclick="showDrinkForm()" value="Yes" :checked="drink_status == 'Yes'" />Yes&nbsp;&nbsp;
+                                <input v-model="drink_status" v-on:change="dataChange();" type="radio" style="margin:5px;" class="radio-inline" onclick="showDrinkForm()" value="Yes" :checked="drink_status == 'Yes'" />Yes&nbsp;&nbsp;
                             </label>
                             <label for="drink_status">
-                                <input v-model="drink_status" type="radio" class="radio-inline" style="margin:5px;" onclick="hideDrinkForm()" value="No" :checked="drink_status == 'No'" />No&nbsp;
+                                <input v-model="drink_status" v-on:change="dataChange();" type="radio" class="radio-inline" style="margin:5px;" onclick="hideDrinkForm()" value="No" :checked="drink_status == 'No'" />No&nbsp;
                             </label>
                         </div>
                         <div id="drinkForm" class="form-group" v-show="drink_status == 'Yes'">
                             <div class="form-group">
                                 <label style="width:75%;" for="drink_time">How long has it been since you last drank alcohol?</label>
-                                <input v-model="drink_time"style="width:55%;" type="text" class="form-control"  />
+                                <input v-model="drink_time" v-on:change="dataChange();" style="width:55%;" type="text" class="form-control"  />
                             </div>
                             <div class="form-group">
                                 <label style="width:75%;" for="drugs_time">How long has it been since you last used drugs?</label>
-                                <input v-model="drugs_time" style="width:55%;" type="text" class="form-control"  />
+                                <input v-model="drugs_time" v-on:change="dataChange();" style="width:55%;" type="text" class="form-control"  />
                             </div>
                             <div class="form-group">
                                 <p style="width:55%;">Did you ever go to some kind of program like Alcoholics Anonymous?</p>
                                 <label for="aaprogram_status">
-                                    <input v-model="aaprogram_status" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_status == 'Yes'" />Yes&nbsp;&nbsp;
+                                    <input v-model="aaprogram_status" v-on:change="dataChange();" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_status == 'Yes'" />Yes&nbsp;&nbsp;
                                 </label>
                                 <label for="aaprogram_status">
-                                    <input v-model="aaprogram_status" type="radio" style="margin:5px;" class="radio-inline" value="No" :checked="aaprogram_status == 'No'" />No&nbsp;
+                                    <input v-model="aaprogram_status" v-on:change="dataChange();" type="radio" style="margin:5px;" class="radio-inline" value="No" :checked="aaprogram_status == 'No'" />No&nbsp;
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label style="width:75%;" for="aaprogram_start">When did you start going?</label>
-                                <input v-model="aaprogram_start" style="width:55%;" type="text" class="form-control"  />
+                                <input v-model="aaprogram_start" v-on:change="dataChange();" style="width:55%;" type="text" class="form-control"  />
                             </div>
                             <div class="form-group">
                                 <p style="width:75%;">Are you still going?</p>
                                 <label for="aaprogram_still">
-                                    <input v-model="aaprogram_still" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_still == 'Yes'" />Yes&nbsp;&nbsp;
+                                    <input v-model="aaprogram_still" v-on:change="dataChange();" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_still == 'Yes'" />Yes&nbsp;&nbsp;
                                 </label>
                                 <label for="aaprogram_still">
-                                    <input v-model="aaprogram_still" type="radio" style="margin:5px;" class="radio-inline" name="aaprogram_still" value="No" :checked="aaprogram_still == 'No'" />No&nbsp;
+                                    <input v-model="aaprogram_still" v-on:change="dataChange();" type="radio" style="margin:5px;" class="radio-inline" name="aaprogram_still" value="No" :checked="aaprogram_still == 'No'" />No&nbsp;
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label style="width:75%;" for="aaprogram_stopped">When did you stop going?</label>
-                                <input v-model="aaprogram_stopped" style="width:55%;" type="text" class="form-control" />
+                                <input v-model="aaprogram_stopped" v-on:change="dataChange();" style="width:55%;" type="text" class="form-control" />
                             </div>
                             <div class="form-group">
                                 <label style="width:75%;" for="aaprogram_how">If you stopped, how have you done since stopping?</label>
-                                <textarea v-model="aaprogram_how" style="width:55%;" class="form-control"></textarea>
+                                <textarea v-model="aaprogram_how" v-on:change="dataChange();" style="width:55%;" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
                             <p style="width:75%;">Have you ever tried to help someone else who had a drug or alcohol problem?</p>
                             <label for="aaprogram_helped">
-                                <input v-model="aaprogram_helped" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_helped == 'Yes'" />Yes&nbsp;&nbsp;
+                                <input v-model="aaprogram_helped" v-on:change="dataChange();" type="radio" style="margin:5px;" class="radio-inline" value="Yes" :checked="aaprogram_helped == 'Yes'" />Yes&nbsp;&nbsp;
                             </label>
                             <label for="aaprogram_helped">
-                                <input v-model="aaprogram_helped" type="radio" style="margin:5px;" class="radio-inline" value="No" :checked="aaprogram_helped == 'No'" />No&nbsp;
+                                <input v-model="aaprogram_helped" v-on:change="dataChange();" type="radio" style="margin:5px;" class="radio-inline" value="No" :checked="aaprogram_helped == 'No'" />No&nbsp;
                             </label>
                         </div>
                         <div class="form-group">
                             <label style="width:75%;" for="aaprogram_descr">If yes, tell us about that, like when it was, who it was, and what you did to help.</label>
-                            <textarea v-model="aaprogram_descr" style="width:75%;" class="form-control"></textarea>
+                            <textarea v-model="aaprogram_descr" v-on:change="dataChange();" style="width:75%;" class="form-control"></textarea>
                         </div>
 
 
@@ -94,7 +94,8 @@
                               <a :href="'/applications/level4/'+id" style="margin:20px;" class="btn btn-info">BACK - LEVEL 4</a>
                             </div>
                             <div style="float:right;" class="col-md-6">
-                              <button style="margin:20px;" class="btn btn-info">NEXT - LEVEL 6</button>
+                                <button v-if="level<=savelevel || change == 'y'" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 6</button>
+                                <a v-else :href="'/applications/level6/'+id" style="margin:20px;" class="btn btn-info">NEXT - LEVEL 6</a>
                             </div>
                         </div>
                 </div>
@@ -123,13 +124,16 @@
             aaprogram_descr: '',
             successmsg: '',
             nexturl: '',
-            savelevel: 5
+            level: '',
+            savelevel: 5,
+            success: '',
+            change: ''
         }
     },
     methods: {
         mounted() {
         //get data for app_id form
-        window.axios.get(`/api/application/`+this.id).then(({ data }) => {
+        window.axios.get('/api/application/'+this.id).then(({ data }) => {
                     this.drink_status = data[0].drink_status;
                     this.drink_time= data[0].drink_time;
                     this.drugs_time = data[0].drugs_time;
@@ -159,8 +163,18 @@
         //if no errors then update data
         if(!this.errors.length){
             window.axios.put(`/api/applications/`+this.id, {id: this.id, drink_status: this.drink_status, drink_time: this.drink_time, drugs_time: this.drugs_time, aaprogram_status: this.aaprogram_status, aaprogram_start: this.aaprogram_start, aaprogram_still: this.aaprogram_still, aaprogram_stopped: this.aaprogram_stopped, aaprogram_how: this.aaprogram_how, aaprogram_helped: this.aaprogram_helped, aaprogram_descr: this.aaprogram_descr, level: this.level, savelevel: this.savelevel}).then(() => { 
+                
                 //display success message
-                this.successmsg = 'success';
+                if(this.savelevel == this.level) {
+                    this.success = 'success';
+                    this.successmsg = 'Congrats on completing Level  5!';
+                }
+                else if(this.change == 'y') {
+                    
+                    this.success = 'success';
+                    this.successmsg = 'Level 5 has been updated successfully.';
+                } 
+                
                 
             });
         }
@@ -200,7 +214,13 @@
             this.errors.push('Let us know how you helped someone else.');
         }        
         //e.preventDefault();
-      }
+      },
+    dataChange: function(){
+            if(this.level >= this.savelevel) {
+               this.change = 'y'; 
+            }
+           
+        }
     },
     components: {
       

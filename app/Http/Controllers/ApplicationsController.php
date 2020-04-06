@@ -4,22 +4,27 @@ namespace App\Http\Controllers;
 
 use Auth;
 use App\Application;
+use App\Job;
+use App\Education;
+use App\Volunteer;
+use App\Recommend;
 use App\User;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Carbon\Carbon;
 use PDF;
+use Storage;
 
 class ApplicationsController extends Controller
 {
-    
+
+
+
     /** SET CONTROLLER VARIABLES **/
-        public function __construct()
+    public function __construct()
     {
-
         $this->middleware('auth');
-
     }
 
     /**
@@ -30,16 +35,13 @@ class ApplicationsController extends Controller
     public function index()
     {
 
-        //GET USER ID from AUTH
-        $user_id = Auth::user()->id;
-
-        //GET CURRENT USER
-        $user = User::find($user_id);
+        $user = User::find($this->user()->id);
 
         //STATUS
         $status = $user->status;
 
-        $applications = Application::where('user_id', $user->id)->get();
+        $applications = Application::where('user_id', $this->user()->id)->get();
+
 
         //get apps and take user to dashboard
         
@@ -51,17 +53,20 @@ class ApplicationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    
+
     public function create()
     {
         //create new application in Level 1
 
         $newapp = new Application;
 
-        $newapp->user_id = Auth::user()->id;
+        $newapp->user_id = $this->user()->id;
 
         //change applicant status to 'applicant'
         $user = User::find($newapp->user_id);
         $user->status = 'applicant';
+        $user->roles()->attach('1'); //attach applicant role
         $user->save();
 
         $newapp->save();
@@ -76,41 +81,62 @@ class ApplicationsController extends Controller
 
     }
 
-    public function show(Request $request)
+    public function show(Request $request, $id)
     {
+
         //get data
-
-        $appid = explode("/", $request->path());
-
-        $application = Application::where('id', $appid[2])->get();
+        $application = Application::where('id', $id)->where('user_id', $this->user()->id)->get();
 
         return response($application->jsonSerialize(), Response::HTTP_OK);
 
     }
 
-    public function edit(Request $request)
+    public function edit(Request $request, $id)
     {
-
-        $appid = explode("/", $request->path());
+        
+        $path = explode("/", $request->path());
         
         //get application for levels 2 and up
-        $application = DB::table('applications')->where('id', $appid[2])->first();
+        $application = DB::table('applications')->where('id', $path[2])->first();
 
-        $applevel = substr($appid[1], 5);
+        $applevel = substr($path[1], 5);
 
-        
         //applications at status 1 have completed level 1 and need to start 2
         $appview = 'levels.level'.$applevel;
 
-        return view($appview, compact('application'));
+
+        //NARRATIVE data for Level 9
+        if($applevel == '9')
+        {
+            $jobs = Job::where('app_id', $id)->get();
+            $schools = Education::where('app_id', $id)->get();
+            $volunteers = Volunteer::where('app_id', $id)->get();
+            $recommends = Recommend::where('app_id', $id)->get();
+
+            return view($appview, compact('application', 'jobs', 'schools', 'volunteers', 'recommends'));
+
+        }
+        //RECOMMENDATION AND CERT DOCS - Level 10
+        elseif($applevel == '10')
+        {
+            $schools = Education::where('app_id', $id)->where('cert', 'Yes')->get();
+            $recommends = Recommend::where('app_id', $id)->get();
+
+            return view($appview, compact('application', 'schools', 'recommends'));
+
+        }
+        else  //return all other levels
+        {
+            return view($appview, compact('application'));
+        }
+
 
     }
 
     public function update(Request $request, $id)
     {
-        
         //SAVE APP DATA ASYNCHRONSLY 
-        $application = Application::find($request->id);
+        $application = Application::find($id);
 
         //SAVE LEVEL
         $savelevel = 'not saved';
@@ -168,7 +194,7 @@ class ApplicationsController extends Controller
 
         if($request->savelevel == '3')
         {
-            $application->vol_status = $request->vol_staus;
+            $application->vol_status = $request->vol_status;
             if($application->status < $request->level){
                 $application->status = $request->level;
             } 
@@ -239,6 +265,24 @@ class ApplicationsController extends Controller
             $application->save();
             $savelevel = 'saved level 8';
         }
+        if($request->savelevel == '9')
+        {
+            $application->narrative = $request->narrative;
+            if($application->status < $request->level){
+                $application->status = $request->level;
+            } 
+            $application->save();
+            $savelevel = 'saved level 9';
+        }
+        if($request->savelevel == '10')
+        {
+            if($application->status < $request->level){
+                $application->status = $request->level;
+            } 
+            $application->save();
+            $savelevel = 'complete';
+            return redirect()->route('dashboard');
+        }
 
        return response($savelevel, Response::HTTP_CREATED);
     }
@@ -250,13 +294,14 @@ class ApplicationsController extends Controller
         $application = Application::find($appid[1]);
         //dd($application->id);
 
-
-        $pdf = PDF::loadView('forms/page1', compact('application'));
-
-        return $pdf->download('pardonform'.$application->id.".pdf");
-
-        //return view('forms/page1', compact('application'));
-
+        if($application->user_id == $this->user()->id)
+        {    
+            $pdf = PDF::loadView('forms/page1', compact('application'));
+            return $pdf->download('pardonform'.$application->id.".pdf");
+        }
+        else {
+            return false;
+        }
 
     }
 

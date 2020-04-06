@@ -8,17 +8,14 @@
     <ul class="navbar-nav mr-auto">
       @guest
       @else
-      <li class="nav-item active">
-        <a class="nav-link" href="{{url('dashboard')}}">Dashboard <span class="sr-only">(current)</span></a>
+      <li class="nav-item {{ set_active('dashboard') }}">
+        <a class="nav-link" href="{{ url('/dashboard') }}">Dashboard <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Help</a>
+      <li class="nav-item {{ set_active('help') }}">
+        <a class="nav-link" href="{{url('/help')}}">Help</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Awards</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">About</a>
+      <li class="nav-item {{ set_active('about') }}">
+        <a class="nav-link" href="{{url('/about')}}">About</a>
       </li>
       @endguest
     </ul>

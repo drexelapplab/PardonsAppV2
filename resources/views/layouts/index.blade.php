@@ -26,12 +26,12 @@
         @include('layouts.nav')
 
         @if(Session::has('flash_message'))
-          <div alert class="alert alert-dismissible alert-success">
+          <div alert class="alert alert-dismissible alert-success" style="width:40%;">
             {{ Session::get('flash_message') }}
           </div>
         @endif
         @if(Session::has('flash_error'))
-          <div alert class="alert alert-dismissible alert-danger">
+          <div alert class="alert alert-dismissible alert-danger" style="width:35%;">
             {{ Session::get('flash_error') }}
           </div>
         @endif

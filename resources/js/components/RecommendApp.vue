@@ -15,15 +15,16 @@
                     <th scope="col">Name</th>
                     <th scope="col">Place</th>
                     <th scope="col">&nbsp</th>
+                    <th scope="col">&nbsp</th>
                 </tr>
             </thead>
-
-			<recommend-component
-				v-for="recommend in recommends"
-				v-bind="recommend"
-				:key="recommend.id"
-				@edit="edit"
-			></recommend-component>
+			<tr v-for="recommend in recommends" v-bind:id="'rec'+recommend.id" class="table-dark">
+				<td class="text-black">{{ recommend.type }}</td>
+				<td class="text-black">{{ recommend.name }}</td>
+				<td class="text-black">{{ recommend.place }}</td>
+				<td><a v-on:click="edit(recommend.id)" class="btn btn-info">Edit</a></td>
+				<td><a v-on:click="del(recommend.id)" class="btn btn-info">Delete</a></td>
+			</tr>
 
 		</table>
 	<form id="Recommendform" @submit.prevent="formSubmit">
@@ -63,7 +64,7 @@
 		this.phone = phone;
 	}
 
-	import RecommendComponent from './RecommendComponent.vue';
+	//import RecommendComponent from './RecommendComponent.vue';
 
 	export default {
 		data() {
@@ -71,6 +72,7 @@
 					recommends: [],
 					errors: [],
 					app_id: $("#appid").attr("appid"), //from appid in blade template
+					rec_id: '',
 					typefield:'',
 					namefield: '',
 					locationfield: '',
@@ -82,45 +84,118 @@
 		},
 		methods: {
 			formSubmit: function(event) {
+		        if(!this.editstatus)
+				{
+					//log entire model
+        			console.log(this.model);
 
-		        axios.post('/api/recommends/'+this.app_id, ({ 
-		        	app_id: this.app_id,
+        			this.checkForm(); //validate form
+        			if(!this.errors.length)
+				    {
+				        axios.post('/api/recommend/'+this.app_id, ({ 
+				        	app_id: this.app_id,
+				        	type: this.typefield,
+				        	name: this.namefield,
+				        	location: this.locationfield,
+				        	email: this.emailfield,
+				        	phone: this.phonefield
+				        	 }))
+				        .then(({ data }) => {
+				          	this.recommends.push(new Recommend(data));
+			          		this.typefield = '';
+							this.namefield = '';
+							this.locationfield = '';
+							this.emailfield = '';
+							this.phonefield = '';
+							event.target.reset();
+				        })
+				        .catch((error) => {
+					        if (error.response) {
+					            console.log(error.response.data);
+					            console.log(error.response.status);
+					            console.log(error.response.headers);
+					        } else if (error.request) {
+					            console.log(error.request);
+					        } else {
+					            console.log('Error', error.message);
+					        }
+					        console.log(error.config);;
+					    });
+					   }
+			    }
+				if(this.editstatus == 'edit')
+		    	{
+		    		this.update();
+		    	}
+			},
+			read() {
+				//TODO FORMAT RECOMMENDATION DATE
+				this.recommends.length = 0;
+				axios.get('/api/recommends/'+this.app_id).then(({ data }) => {
+					if(data.length > 0){data.forEach(recommend => {
+						this.recommends.push(new Recommend(recommend));
+					});}
+				});				
+			},
+			update() {
+				axios.put('/api/recommend/'+this.rec_id, ({
+					app_id: this.app_id,
 		        	type: this.typefield,
 		        	name: this.namefield,
 		        	location: this.locationfield,
 		        	email: this.emailfield,
 		        	phone: this.phonefield
-		        	 }))
+		        }))
 		        .then(({ data }) => {
-		          	this.recommends.push(new Recommend(data));
-	          		this.typefield = '';
-					this.namefield = '';
-					this.locationfield = '';
-					this.emailfield = '';
-					this.phonefield = '';
-					event.target.reset();
-		        });
+		          this.recommends.push(new Recommend(data));
+		          this.typefield = '';
+		          this.namefield = '';
+		          this.locationfield = '';
+		          this.emailfield = '';
+		          this.phonefield = '';
+		          this.read();
+		        });	
 			},
-			read() {
-//TODO FORMAT RECOMMENDATION DATE
-				axios.get('/api/recommends/'+this.app_id).then(({ data }) => {
+			edit(j) {
+				this.editstatus = 'edit';			
+				axios.get('/api/recommend/'+j).then(({ data }) => {
 					data.forEach(recommend => {
-						this.recommends.push(new Recommend(recommend));
-					});
+					  this.typefield = recommend.type;
+			          this.namefield = recommend.name;
+			          this.locationfield = recommend.location;
+			          this.emailfield = recommend.email;
+			          this.phonefield = recommend.phone;
+			          this.rec_id = j;
+			        });
 				});
 			},
-			update() {
-				//TODO
+			del: (j) => {
+	
+				axios.delete('/api/recommend/'+j).then(function (response) {
+					console.log('rec deleted');
+				});
+				var recID = document.getElementById('rec'+j);
+				recID.style.display = "none";
 			},
-			edit() {
-				//TODO
-			},
-			del() {
-				//TODO
-			}
+			//validate form fields - add errors to the error array
+      		checkForm: function(e) {
+      			this.errors = [];
+      			if(!this.typefield){
+      				this.errors.push('Please select a type.');
+      			}
+      			if(!this.namefield){
+            		this.errors.push('Please enter a name.');
+        		}
+        		if(!this.phonefield){
+            		this.errors.push('Please enter a phone number.');
+        		}
+        		if(!this.emailfield){
+            		this.errors.push('Please enter an email.');
+        		}
+      		}
 		},
 		components: {
-				RecommendComponent
+				//RecommendComponent
 		},
 		created() {
 				this.read();

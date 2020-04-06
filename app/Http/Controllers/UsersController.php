@@ -15,7 +15,6 @@ class UsersController extends Controller
         if($request->status)
         {
         	$user = User::find($request->id);
-        	$user->status = 'applicant';
         	
             $user->save();
 

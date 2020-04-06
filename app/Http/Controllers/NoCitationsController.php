@@ -18,7 +18,6 @@ class NoCitationsController extends Controller
     public function store()
     {
 
-
     	$nocitationObj = new NoCitation();
     	$nocitationObj->nocitations_date = Carbon::createFromFormat('m/d/Y', $request('nocitation_date'));
     	$nocitationObj->location = $request('location');
